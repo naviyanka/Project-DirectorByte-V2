@@ -1,29 +1,45 @@
-# Stabilization Walkthrough - DirectorByte v2
+# DirectorByte v2 Stabilization Walkthrough
 
-This document summarizes the final stabilization and functional wiring performed on the DirectorByte v2 development environment.
+## Overview
+Successfully stabilized the DirectorByte v2 development environment, resolved all routing mismatches, and migrated the project to GitHub.
 
-## 1. Authentication & Persistence
-- **Refresh Token Persistence**: Fixed the "sign-out on refresh" bug by implementing `HttpOnly` refresh cookies and a robust `axios` interceptor that automatically handles 401 errors.
-- **Session Stability**: Ensured `withCredentials: true` is globally set for all API calls.
+## Key Changes Made
 
-## 2. Onboarding Persistence
-- **Database Schema**: Added `onboardingComplete` field to the `User` model in `schema.prisma`.
-- **Backend API**: Updated `UserController.updateMe` and `user.routes.ts` to accept and persist the onboarding status.
-- **Frontend Integration**: Wired the "Let's go!" button in `OnboardingPage.tsx` to save the status permanently, resolving the onboarding loop.
+### 1. API Routing Alignment
+- **Pluralized Endpoints**: Updated all frontend services to match backend plural routes:
+    - `/user/me` → `/users/me`
+    - `/user/api-keys` → `/api-keys`
+    - `/billing/plans` → `/plans`
+    - `/billing/subscription` → `/subscriptions/me`
+    - `/notifications` (corrected from assumed plural `/users/notifications`)
+- **Result**: Eliminated persistent `404 Not Found` errors across the dashboard, settings, and onboarding flows.
 
-## 3. Data Flow & Stability (Unwrapping)
-- **Service Layer Cleanup**: Performed a global fix on all frontend services (`projects`, `storage`, `billing`, `apiKeys`, `notifications`, `admin`) to correctly unwrap API responses using the `.data.data` pattern.
-- **Defensive UI**: Implemented `Array.isArray()` checks and optional chaining (`?.`) in `HomePage`, `SubscriptionTab`, and `StorageTab` to prevent crashes during initial data loads.
+### 2. Billing & Subscription Management
+- **Stripe Customer Portal**: Implemented `createPortalSession` in the backend (`StripeGateway`, `SubscriptionService`, `SubscriptionController`).
+- **Billing Service**: Updated the frontend to support secure Stripe-hosted billing management.
 
-## 4. UI/UX Functionality
-- **Button Audit**: Verified functional coverage for:
-    - Sidebar navigation links.
-    - Topbar user menu and logout.
-    - New Project creation modal.
-    - Active Studio resume buttons.
-- **Managed AI Notice**: Ensured the "Managed AI" UI correctly reflects the user's plan state.
+### 3. Database & Schema
+- **Schema Sync**: Added `gatewayCustomerId` to the `Subscription` model in `schema.prisma`.
+- **Initialization**: Ran `npx prisma db push` and `npx prisma db seed` to ensure the database structure and initial plans are correctly populated.
+- **Onboarding Persistence**: Verified the `onboardingComplete` flag in the database to prevent tour loops.
 
-## 5. Environment Status
-- **API Port**: 4001.
-- **Database**: Fully migrated with `onboardingComplete` field.
-- **Status**: Stable and ready for feature development.
+### 4. GitHub Migration
+- **Repository**: [Project-DirectorByte-V2](https://github.com/naviyanka/Project-DirectorByte-V2.git)
+- **Consolidation**: 
+    - Moved all **Plans** into the project root.
+    - Moved all **Documentation/Artifacts** into `docs/`.
+- **Status**: Successfully pushed the complete codebase and project history to the new repository.
+
+## Verification
+- **Auth**: Login and profile updates are functional.
+- **Dashboard**: Usage stats and recent projects load without 404s.
+- **Notifications**: Badge and list correctly fetch from the API.
+- **Billing**: Plans load on the pricing page; checkout and portal endpoints are wired up.
+
+## Running Locally
+To restart the development environment:
+1. Ensure ports 3000 and 4001 are free.
+2. Run `npm run dev` from the root directory.
+
+---
+*Stabilization complete. Project is ready for production scaling.*
