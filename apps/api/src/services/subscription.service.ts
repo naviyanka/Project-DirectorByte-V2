@@ -152,7 +152,7 @@ export class SubscriptionService {
     const periodEnd = new Date(now);
     periodEnd.setDate(periodEnd.getDate() + (billingCycle === 'MONTHLY' ? 30 : 365));
 
-    const sub = await prisma.$transaction(async (tx) => {
+    const sub = await prisma.$transaction(async (tx: any) => {
       // Deactivate existing
       await tx.subscription.deleteMany({ where: { userId } });
 
@@ -418,7 +418,7 @@ export class SubscriptionService {
 
     let processed = 0;
     for (const sub of expiredSubs) {
-      await prisma.$transaction(async (tx) => {
+      await prisma.$transaction(async (tx: any) => {
         await tx.subscription.update({
           where: { id: sub.id },
           data: {

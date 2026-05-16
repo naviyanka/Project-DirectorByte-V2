@@ -67,7 +67,7 @@ export class WebhookController {
     const now = new Date();
     const periodEnd = new Date(now.getTime() + 30 * 86400000);
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       // Upsert subscription
       await tx.subscription.upsert({
         where: { userId },
@@ -131,7 +131,7 @@ export class WebhookController {
     const periodStart = data.period_start ? new Date(data.period_start * 1000) : new Date();
     const periodEnd = data.period_end ? new Date(data.period_end * 1000) : new Date(Date.now() + 30 * 86400000);
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       await tx.subscription.update({
         where: { id: sub.id },
         data: { currentPeriodStart: periodStart, currentPeriodEnd: periodEnd, status: 'ACTIVE', gracePeriodEnd: null },
@@ -163,7 +163,7 @@ export class WebhookController {
 
     const gracePeriodEnd = new Date(Date.now() + GRACE_PERIOD_DAYS * 86400000);
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       await tx.subscription.update({
         where: { id: sub.id },
         data: { status: 'PAST_DUE', gracePeriodEnd },

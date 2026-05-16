@@ -67,7 +67,7 @@ export class ProjectController {
         throw new ForbiddenError('Project limit reached. Please upgrade your plan.');
       }
 
-      const project = await prisma.$transaction(async (tx) => {
+      const project = await prisma.$transaction(async (tx: any) => {
         const newProject = await tx.project.create({
           data: {
             userId: req.user!.id,
@@ -145,7 +145,7 @@ export class ProjectController {
         throw new NotFoundError('Project');
       }
 
-      await prisma.$transaction(async (tx) => {
+      await prisma.$transaction(async (tx: any) => {
         await tx.project.update({
           where: { id },
           data: { deletedAt: new Date() }
@@ -199,7 +199,7 @@ export class ProjectController {
         throw new ForbiddenError('Project limit reached. Cannot restore.');
       }
 
-      const restored = await prisma.$transaction(async (tx) => {
+      const restored = await prisma.$transaction(async (tx: any) => {
         const p = await tx.project.update({
           where: { id },
           data: { deletedAt: null }
@@ -239,7 +239,7 @@ export class ProjectController {
         throw new ForbiddenError('Project limit reached. Please upgrade your plan.');
       }
 
-      const duplicate = await prisma.$transaction(async (tx) => {
+      const duplicate = await prisma.$transaction(async (tx: any) => {
         const p = await tx.project.create({
           data: {
             userId: req.user!.id,

@@ -41,7 +41,7 @@ export class AdminAuditController {
       const logs = await prisma.auditLog.findMany({ where, orderBy: { createdAt: 'desc' }, take: 10000 });
 
       const header = 'id,action,adminId,targetUserId,targetResource,ipAddress,createdAt';
-      const rows = logs.map(l => `${l.id},${l.action},${l.adminId || ''},${l.targetUserId || ''},${l.targetResource || ''},${l.ipAddress || ''},${l.createdAt.toISOString()}`);
+      const rows = logs.map((l: any) => `${l.id},${l.action},${l.adminId || ''},${l.targetUserId || ''},${l.targetResource || ''},${l.ipAddress || ''},${l.createdAt.toISOString()}`);
       const csv = [header, ...rows].join('\n');
 
       res.setHeader('Content-Type', 'text/csv');

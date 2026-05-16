@@ -28,7 +28,7 @@ export class AdminUserController {
         include: { subscription: { include: { plan: true } } },
       });
 
-      return response.paginated(res, users.map(u => ({
+      return response.paginated(res, users.map((u: any) => ({
         id: u.id, email: u.email, displayName: u.displayName, status: u.status, role: u.role,
         createdAt: u.createdAt, lastLoginAt: u.lastLoginAt,
         plan: u.subscription?.plan?.name || 'None',
@@ -58,7 +58,7 @@ export class AdminUserController {
       return response.ok(res, {
         ...user,
         passwordHash: undefined, // Strip sensitive
-        apiKeys: user.apiKeys.map(k => ({ ...k, encryptedKey: undefined })),
+        apiKeys: user.apiKeys.map((k: any) => ({ ...k, encryptedKey: undefined })),
         auditLogs,
       });
     } catch (error) { next(error); }
@@ -77,7 +77,7 @@ export class AdminUserController {
 
   static async suspendUser(req: Request, res: Response, next: NextFunction) {
     try {
-      await prisma.$transaction(async (tx) => {
+      await prisma.$transaction(async (tx: any) => {
         await tx.user.update({ where: { id: req.params.id }, data: { status: 'SUSPENDED' } });
         await tx.session.deleteMany({ where: { userId: req.params.id } });
       });
@@ -87,7 +87,7 @@ export class AdminUserController {
 
   static async banUser(req: Request, res: Response, next: NextFunction) {
     try {
-      await prisma.$transaction(async (tx) => {
+      await prisma.$transaction(async (tx: any) => {
         await tx.user.update({ where: { id: req.params.id }, data: { status: 'BANNED' } });
         await tx.session.deleteMany({ where: { userId: req.params.id } });
       });
@@ -110,7 +110,7 @@ export class AdminUserController {
 
       if (method === 'set' && newPassword) {
         const hash = await bcrypt.hash(newPassword, 12);
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx: any) => {
           await tx.user.update({ where: { id: user.id }, data: { passwordHash: hash } });
           await tx.session.deleteMany({ where: { userId: user.id } });
         });

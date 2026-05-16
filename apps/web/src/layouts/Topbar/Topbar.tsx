@@ -36,7 +36,7 @@ export function Topbar() {
 
   const { data: notifications } = useQuery({
     queryKey: ['notifications'],
-    queryFn: () => notificationsService.getNotifications({ unreadOnly: true }),
+    queryFn: () => notificationsService.getNotifications(true),
     refetchInterval: 30000, // Poll every 30s
     enabled: isAuthenticated
   });

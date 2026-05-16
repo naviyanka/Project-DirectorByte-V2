@@ -21,12 +21,12 @@ export const prisma = globalThis.prisma ?? prismaClientSingleton();
 
 if (env.NODE_ENV !== 'production') globalThis.prisma = prisma;
 
-prisma.$on('error', (e) => {
+prisma.$on('error', (e: any) => {
   logger.error(e, 'Prisma Client Error');
 });
 
 if (env.NODE_ENV === 'development') {
-  prisma.$on('warn', (e) => {
+  prisma.$on('warn', (e: any) => {
     logger.warn(e, 'Prisma Client Warning');
   });
 }

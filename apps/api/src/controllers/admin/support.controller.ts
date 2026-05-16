@@ -53,7 +53,7 @@ export class AdminSupportController {
       const ticket = await prisma.supportTicket.findUnique({ where: { id: req.params.id } });
       if (!ticket) throw new NotFoundError('Ticket');
 
-      const msg = await prisma.$transaction(async (tx) => {
+      const msg = await prisma.$transaction(async (tx: any) => {
         const m = await tx.ticketMessage.create({
           data: { ticketId: ticket.id, senderId: req.adminSession!.sessionId, senderType: 'ADMIN', body: req.body.body },
         });

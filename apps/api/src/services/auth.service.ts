@@ -26,7 +26,7 @@ export class AuthService {
     const emailVerificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
     // Create user and related records in transaction
-    const user = await prisma.$transaction(async (tx) => {
+    const user = await prisma.$transaction(async (tx: any) => {
       // Find the free plan
       const freePlan = await tx.plan.findUnique({ where: { slug: 'free' } });
       
@@ -259,7 +259,7 @@ export class AuthService {
 
     if (!user) {
       // Auto-register via Google
-      user = await prisma.$transaction(async (tx) => {
+      user = await prisma.$transaction(async (tx: any) => {
         const freePlan = await tx.plan.findUnique({ where: { slug: 'free' } });
         
         const newUser = await tx.user.create({

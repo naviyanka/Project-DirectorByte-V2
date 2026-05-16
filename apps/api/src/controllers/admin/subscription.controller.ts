@@ -65,7 +65,7 @@ export class AdminSubscriptionController {
       const now = new Date();
       const periodEnd = new Date(now.getTime() + durationDays * 86400000);
 
-      const sub = await prisma.$transaction(async (tx) => {
+      const sub = await prisma.$transaction(async (tx: any) => {
         await tx.subscription.deleteMany({ where: { userId } });
         const s = await tx.subscription.create({
           data: {

@@ -16,7 +16,7 @@ export class AdminSystemController {
   static async getSettings(req: Request, res: Response, next: NextFunction) {
     try {
       const settings = await prisma.systemSetting.findMany();
-      return response.ok(res, settings.map(s => ({
+      return response.ok(res, settings.map((s: any) => ({
         ...s, value: s.isSecret ? '••••••' : s.value,
       })));
     } catch (error) { next(error); }
@@ -76,7 +76,7 @@ export class AdminSystemController {
       const flags = await prisma.systemSetting.findMany({
         where: { key: { startsWith: 'feature.' } },
       });
-      return response.ok(res, flags.map(f => ({ key: f.key, enabled: f.value === 'true' })));
+      return response.ok(res, flags.map((f: any) => ({ key: f.key, enabled: f.value === 'true' })));
     } catch (error) { next(error); }
   }
 

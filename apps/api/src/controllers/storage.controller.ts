@@ -185,7 +185,7 @@ export class StorageController {
       }
 
       // Update storage usage
-      await prisma.$transaction(async (tx) => {
+      await prisma.$transaction(async (tx: any) => {
         await tx.user.update({
           where: { id: user.id },
           data: { storageBytesUsed: { increment: req.file!.size } } // File size in normal number for increment
@@ -258,7 +258,7 @@ export class StorageController {
       }
 
       if (sizeBytesFreed > 0) {
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx: any) => {
           await tx.user.update({
             where: { id: user.id },
             data: { storageBytesUsed: { decrement: sizeBytesFreed } }

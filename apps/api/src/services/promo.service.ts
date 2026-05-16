@@ -109,7 +109,7 @@ export class PromoService {
     const promo = await prisma.promoCode.findUnique({ where: { code: code.toUpperCase() } });
     if (!promo) throw new Error('Promo code not found');
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       await tx.promoRedemption.create({
         data: {
           promoCodeId: promo.id,

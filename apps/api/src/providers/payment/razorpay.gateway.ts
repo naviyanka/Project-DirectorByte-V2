@@ -104,6 +104,12 @@ export class RazorpayGateway implements PaymentGateway {
     }
   }
 
+  async createPortalSession(_customerId: string, _returnUrl: string): Promise<{ portalUrl: string }> {
+    // Razorpay doesn't have a native billing portal like Stripe.
+    // Return a link to the user's dashboard or a help page.
+    return { portalUrl: 'https://dashboard.razorpay.com' };
+  }
+
   validateWebhook(payload: string | Buffer, signature: string): WebhookEvent {
     if (!env.RAZORPAY_WEBHOOK_SECRET) {
       throw new Error('RAZORPAY_WEBHOOK_SECRET not configured');

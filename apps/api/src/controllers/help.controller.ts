@@ -10,7 +10,7 @@ export class HelpController {
         orderBy: { sortOrder: 'asc' },
         include: { _count: { select: { articles: { where: { status: 'PUBLISHED' } } } } },
       });
-      return response.ok(res, categories.map(c => ({ ...c, articleCount: c._count.articles })));
+      return response.ok(res, categories.map((c: any) => ({ ...c, articleCount: c._count.articles })));
     } catch (error) { next(error); }
   }
 

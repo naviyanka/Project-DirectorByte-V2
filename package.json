@@ -8,7 +8,7 @@
   "scripts": {
     "predev": "powershell -ExecutionPolicy Bypass -File kill-ports.ps1",
     "dev": "concurrently \"npm run dev --workspace=api\" \"npm run dev --workspace=web\"",
-    "build": "npm run build --workspaces --if-present",
+    "build": "npx prisma generate --schema=apps/api/prisma/schema.prisma && npm run build --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "db:migrate": "npm run migrate --workspace=api",
     "db:seed": "npm run seed --workspace=api"

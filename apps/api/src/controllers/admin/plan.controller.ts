@@ -7,7 +7,7 @@ export class AdminPlanController {
   static async list(req: Request, res: Response, next: NextFunction) {
     try {
       const plans = await prisma.plan.findMany({ orderBy: { sortOrder: 'asc' } });
-      const withCounts = await Promise.all(plans.map(async (p) => ({
+      const withCounts = await Promise.all(plans.map(async (p: any) => ({
         ...p, subscriberCount: await prisma.subscription.count({ where: { planId: p.id, status: { in: ['ACTIVE', 'TRIALING'] } } }),
       })));
       return response.ok(res, withCounts);
