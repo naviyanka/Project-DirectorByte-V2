@@ -131,6 +131,11 @@ export class AdminSystemController {
   static async previewEmailTemplate(req: Request, res: Response, next: NextFunction) {
     try {
       const { key } = req.params;
+
+      if (!/^[a-zA-Z0-9_-]+$/.test(key)) {
+        return response.badRequest(res, 'INVALID_KEY', 'Invalid template key format');
+      }
+
       const { variables = {} } = req.body;
       const Handlebars = (await import('handlebars')).default;
 

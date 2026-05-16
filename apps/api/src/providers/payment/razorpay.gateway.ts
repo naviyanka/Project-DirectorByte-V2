@@ -60,6 +60,10 @@ export class RazorpayGateway implements PaymentGateway {
     };
   }
 
+  async createPortalSession(customerId: string, returnUrl: string): Promise<{ portalUrl: string }> {
+    return { portalUrl: '' }; // Placeholder since Razorpay handles portal differently
+  }
+
   async cancelSubscription(externalId: string, _immediately: boolean): Promise<void> {
     const rz = getRazorpay();
     await (rz.subscriptions as any).cancel(externalId);
