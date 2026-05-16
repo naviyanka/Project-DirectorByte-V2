@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -12,8 +13,6 @@
     "resolveJsonModule": true,
     "allowJs": true,
     "incremental": true,
-    "ignoreDeprecations": "5.0",
-    "baseUrl": ".",
     "paths": {
       "@directorbyte/types/*": ["packages/types/src/*"],
       "@directorbyte/utils/*": ["packages/utils/src/*"],
