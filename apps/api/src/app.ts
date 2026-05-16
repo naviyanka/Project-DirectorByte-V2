@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
@@ -29,6 +30,16 @@ export const createApp = () => {
 
   // Mount API Routes
   app.use('/api/v1', routes);
+  
+  // Serve static files from the React app in production
+  if (process.env.NODE_ENV === 'production') {
+    const webDistPath = path.join(__dirname, '../../web/dist');
+    app.use(express.static(webDistPath));
+    
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(webDistPath, 'index.html'));
+    });
+  }
 
   // Centralized Error Handling
   app.use(errorHandler);
