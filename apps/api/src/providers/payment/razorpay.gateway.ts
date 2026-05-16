@@ -94,13 +94,6 @@ export class RazorpayGateway implements PaymentGateway {
     return `rz_coupon_${Date.now()}`;
   }
 
-  async createPortalSession(customerId: string, returnUrl: string): Promise<{ portalUrl: string }> {
-    // Razorpay doesn't have a direct equivalent to Stripe's customer portal in the same way.
-    // Typically, you provide a hosted link or handle it via API.
-    // Returning a dummy or throwing an error is standard if unsupported.
-    return { portalUrl: returnUrl };
-  }
-
   async getInvoicePdfUrl(invoiceId: string): Promise<string | null> {
     const rz = getRazorpay();
     try {
@@ -109,6 +102,13 @@ export class RazorpayGateway implements PaymentGateway {
     } catch {
       return null;
     }
+  }
+
+  async createPortalSession(customerId: string, returnUrl: string): Promise<{ portalUrl: string }> {
+    // Razorpay doesn't have a direct equivalent to Stripe's customer portal in the same way.
+    // Typically, you provide a hosted link or handle it via API.
+    // Returning a dummy or throwing an error is standard if unsupported.
+    return { portalUrl: returnUrl };
   }
 
   validateWebhook(payload: string | Buffer, signature: string): WebhookEvent {
