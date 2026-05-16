@@ -97,7 +97,7 @@ export async function seedPlans(prisma: PrismaClient) {
     },
   ];
 
-  console.log('Seeding plans...');
+  console.warn('Seeding plans...');
   for (const plan of plans) {
     await prisma.plan.upsert({
       where: { slug: plan.slug },
@@ -105,5 +105,5 @@ export async function seedPlans(prisma: PrismaClient) {
       create: plan,
     });
   }
-  console.log('Plans seeded successfully.');
+  console.warn('Plans seeded successfully.');
 }

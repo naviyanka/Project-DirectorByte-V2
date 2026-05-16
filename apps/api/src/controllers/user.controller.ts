@@ -329,7 +329,7 @@ export class UserController {
       }
 
       await archive.finalize();
-      console.log(`User ${userId} exported data`);
+      console.warn(`User ${userId} exported data`);
     } catch (error) { next(error); }
   }
 }

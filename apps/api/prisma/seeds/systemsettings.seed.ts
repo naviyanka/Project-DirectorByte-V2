@@ -15,7 +15,7 @@ export async function seedSystemSettings(prisma: PrismaClient) {
     { key: 'storage.defaultProvider', value: JSON.stringify('local'), description: 'Default storage provider for new users' },
   ];
 
-  console.log('Seeding system settings...');
+  console.warn('Seeding system settings...');
   for (const setting of settings) {
     await prisma.systemSetting.upsert({
       where: { key: setting.key },
@@ -23,5 +23,5 @@ export async function seedSystemSettings(prisma: PrismaClient) {
       create: setting,
     });
   }
-  console.log('System settings seeded successfully.');
+  console.warn('System settings seeded successfully.');
 }

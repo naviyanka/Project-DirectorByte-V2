@@ -2,7 +2,7 @@ import { execSync } from 'child_process';
 import dotenv from 'dotenv';
 
 export async function setup() {
-  console.log('Global setup starting...');
+  console.warn('Global setup starting...');
   
   // Load test environment variables
   dotenv.config({ path: '.env.test' });
@@ -15,16 +15,16 @@ export async function setup() {
 
   try {
     // Run migrations on test DB
-    // console.log('Running migrations on test database...');
+    // console.warn('Running migrations on test database...');
     // execSync('npx prisma migrate deploy', { stdio: 'inherit' });
   } catch (error) {
     console.error('Failed to run migrations:', error);
     throw error;
   }
   
-  console.log('Global setup complete.');
+  console.warn('Global setup complete.');
 }
 
 export async function teardown() {
-  console.log('Global teardown...');
+  console.warn('Global teardown...');
 }
