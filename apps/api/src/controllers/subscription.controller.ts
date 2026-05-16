@@ -66,4 +66,11 @@ export class SubscriptionController {
       return res.redirect(pdfUrl);
     } catch (error) { next(error); }
   }
+
+  static async createPortalSession(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await SubscriptionService.createPortalSession(req.user!.id);
+      return response.ok(res, result);
+    } catch (error) { next(error); }
+  }
 }

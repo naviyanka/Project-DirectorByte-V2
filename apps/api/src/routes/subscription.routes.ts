@@ -29,6 +29,7 @@ router.use(authenticate);
 
 router.get('/me', SubscriptionController.getMySubscription);
 router.post('/checkout', validateBody(checkoutSchema), SubscriptionController.checkout);
+router.post('/portal', SubscriptionController.createPortalSession);
 router.post('/cancel', validateBody(cancelSchema), SubscriptionController.cancel);
 router.post('/reactivate', SubscriptionController.reactivate);
 router.post('/change-billing-cycle', validateBody(changeCycleSchema), SubscriptionController.changeBillingCycle);

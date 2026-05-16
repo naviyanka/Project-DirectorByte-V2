@@ -388,6 +388,17 @@ export class SubscriptionService {
     return null;
   }
 
+  /** Create a billing portal session */
+  static async createPortalSession(userId: string) {
+    const sub = await prisma.subscription.findUnique({ where: { userId } });
+    if (!sub || !sub.gatewayCustomerId) {
+      throw new AppError('No billing customer found', 400, 'NO_CUSTOMER');
+    }
+
+    const gateway = getGateway();
+    return gateway.createPortalSession(sub.gatewayCustomerId, `${env.APP_URL}/settings?tab=subscription`);
+  }
+
   /**
    * Handle grace period expiration (Rule 6).
    * Called by the daily background job.

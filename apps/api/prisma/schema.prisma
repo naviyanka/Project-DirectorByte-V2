@@ -412,6 +412,7 @@ model Subscription {
   cancelAtPeriodEnd    Boolean            @default(false) /// Whether to terminate at cycle end
   trialStart           DateTime?          /// Start of free trial
   trialEnd             DateTime?          /// End of free trial
+  gatewayCustomerId    String?           /// Customer ID from the payment gateway (e.g., Stripe)
   gatewaySubscriptionId String?           /// ID from the payment gateway (e.g., Stripe)
   gateway              PaymentGateway     @default(STRIPE) /// Payment processor used
   promoCodeId          String?            /// Active promo code ID
