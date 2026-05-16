@@ -9,7 +9,7 @@
     "predev": "powershell -ExecutionPolicy Bypass -File kill-ports.ps1",
     "dev": "concurrently \"npm run dev --workspace=api\" \"npm run dev --workspace=web\"",
     "start": "npm start --workspace=api",
-    "build": "npx --package=prisma@5.22.0 prisma generate --schema=apps/api/prisma/schema.prisma && npm run build --workspaces --if-present",
+    "build": "npx --package=prisma@5.12.1 prisma generate --schema=apps/api/prisma/schema.prisma && npm run build --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "db:migrate": "npm run migrate --workspace=api",
     "db:seed": "npm run seed --workspace=api",
@@ -32,8 +32,8 @@
     "vite": "^6.0.13",
     "@vitejs/plugin-react": "^4.3.4",
     "concurrently": "^9.1.0",
-    "prisma": "5.22.0",
-    "@prisma/client": "5.22.0"
+    "prisma": "5.12.1",
+    "@prisma/client": "5.12.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.2.0",
