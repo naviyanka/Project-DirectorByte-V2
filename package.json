@@ -30,7 +30,7 @@
     "ioredis-mock": "^8.13.1",
     "prettier": "^3.5.1",
     "typescript": "^5.7.3",
-    "vite": "^8.0.13",
+    "vite": "^5.4.11",
     "vitest": "^4.1.6"
   }
 }
