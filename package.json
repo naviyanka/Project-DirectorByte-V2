@@ -13,6 +13,7 @@
     "lint": "npm run lint --workspaces --if-present",
     "db:migrate": "npm run migrate --workspace=api",
     "db:seed": "npm run seed --workspace=api",
+    "preinstall": "npm config set legacy-peer-deps true",
     "postinstall": "node apps/web/check-deps.cjs"
   },
   "dependencies": {
