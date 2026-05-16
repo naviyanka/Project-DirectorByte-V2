@@ -11,20 +11,20 @@ export interface Notification {
 }
 
 export const notificationsService = {
-  async getNotifications(params?: { unreadOnly?: boolean }): Promise<Notification[]> {
-    const response = await axios.get('/users/notifications', { params });
+  async getNotifications(unreadOnly: boolean = false): Promise<Notification[]> {
+    const response = await axios.get('/notifications', { params: { unreadOnly } });
     return response.data.data;
   },
 
   async markAsRead(id: string): Promise<void> {
-    await axios.post(`/users/notifications/${id}/read`);
+    await axios.patch(`/notifications/${id}/read`);
   },
 
   async markAllAsRead(): Promise<void> {
-    await axios.post('/users/notifications/read-all');
+    await axios.post('/notifications/read-all');
   },
 
   async deleteNotification(id: string): Promise<void> {
-    await axios.delete(`/users/notifications/${id}`);
+    await axios.delete(`/notifications/${id}`);
   }
 };
