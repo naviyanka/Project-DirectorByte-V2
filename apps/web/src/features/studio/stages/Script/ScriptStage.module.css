@@ -1,0 +1,80 @@
+.textarea {
+  width: 100%;
+  background-color: var(--color-surface-200);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  color: var(--color-text-primary);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  outline: none;
+  transition: all var(--duration-fast);
+  resize: vertical;
+}
+
+.textarea:focus {
+  border-color: var(--color-brand-400);
+  background-color: var(--color-surface-300);
+}
+
+.scriptDoc {
+  background-color: #FFFFFF;
+  color: #1A1A1A;
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  font-family: 'Courier New', Courier, monospace;
+  min-height: 600px;
+}
+
+.scriptHeader {
+  text-align: center;
+  margin-bottom: var(--space-16);
+  border-bottom: 2px solid #E5E7EB;
+  padding-bottom: var(--space-8);
+}
+
+.actTitle {
+  text-align: center;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  margin: var(--space-10) 0;
+}
+
+.sceneHeading {
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: var(--space-8);
+}
+
+.sceneAction {
+  line-height: 1.4;
+  margin: var(--space-4) 0;
+}
+
+.dialogueContainer {
+  width: 60%;
+  margin: var(--space-6) auto;
+  text-align: center;
+}
+
+.characterName {
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.dialogueText {
+  line-height: 1.2;
+}
+
+@media (max-width: 1024px) {
+  .scriptDoc {
+    padding: var(--space-6);
+  }
+  
+  .dialogueContainer {
+    width: 90%;
+  }
+}

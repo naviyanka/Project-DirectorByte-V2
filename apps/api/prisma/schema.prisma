@@ -1,0 +1,723 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ═══════════════════════════════════════
+// Enums
+// ═══════════════════════════════════════
+
+/// Represents the current status of a user account
+enum UserStatus {
+  ACTIVE               /// Account is in good standing
+  SUSPENDED            /// Account temporarily disabled
+  BANNED               /// Account permanently disabled
+  PENDING_VERIFICATION /// Account awaiting email verification
+  DELETED              /// Account soft-deleted
+}
+
+/// Represents the authorization level of a user
+enum UserRole {
+  USER                 /// Standard user
+  ADMIN                /// System administrator with full access
+}
+
+/// Represents the status of a user's subscription
+enum SubscriptionStatus {
+  ACTIVE               /// Subscription is active and paid
+  TRIALING             /// Subscription is in a free trial period
+  PAST_DUE             /// Payment failed, awaiting retry
+  CANCELED             /// Subscription canceled but active until period end
+  EXPIRED              /// Subscription ended and is no longer active
+  PAUSED               /// Subscription temporarily suspended by user
+}
+
+/// Represents the billing frequency
+enum BillingCycle {
+  MONTHLY              /// Billed every month
+  ANNUAL               /// Billed once a year
+  LIFETIME             /// One-time payment for life
+  TRIAL                /// Free trial period
+}
+
+/// Represents the status of a payment transaction
+enum PaymentStatus {
+  PENDING              /// Payment initiated but not confirmed
+  SUCCEEDED            /// Payment successfully processed
+  FAILED               /// Payment failed
+  REFUNDED             /// Payment has been returned to the user
+  WAIVED               /// Payment not required (e.g., 100% discount)
+}
+
+/// Represents the payment gateway used for the transaction
+enum PaymentGateway {
+  STRIPE               /// Stripe payment processor
+  PADDLE               /// Paddle payment processor
+  RAZORPAY             /// Razorpay payment processor
+  MANUAL               /// Payment manually recorded by admin
+}
+
+/// Represents the storage service provider
+enum StorageProvider {
+  LOCAL                /// Local filesystem storage
+  GOOGLE_CLOUD_STORAGE /// Google Cloud Storage (GCS)
+  GOOGLE_DRIVE         /// User's own Google Drive
+}
+
+/// Represents the different AI modules available in the studio
+enum AIModule {
+  CHAT                 /// AI Chat / Assistant
+  SCRIPT               /// Script generation
+  STORYBOARD           /// Storyboard generation
+  IMAGE_GEN            /// Image generation
+  VIDEO_GEN            /// Video generation
+  AUDIO_GEN            /// Audio/Music generation
+  VOICEOVER            /// Text-to-speech voiceovers
+  UPSCALE              /// Image/Video upscaling
+  BACKGROUND_REMOVAL   /// Background removal for assets
+}
+
+/// Represents how an AI API key is managed
+enum KeyType {
+  USER_PROVIDED        /// User's own BYO API key
+  PLATFORM             /// Admin-managed platform-level key
+  FREE_TIER            /// Free provider with no key required
+}
+
+/// Represents the current state of a project
+enum ProjectStatus {
+  DRAFT                /// Project created but not started
+  IN_PROGRESS          /// Project is actively being worked on
+  COMPLETED            /// Project production is finished
+  ARCHIVED             /// Project moved to archives
+  FAILED               /// Project production encountered an error
+}
+
+/// Represents the status of an asynchronous generation task
+enum GenerationJobStatus {
+  QUEUED               /// Job is waiting for a worker
+  PROCESSING           /// Job is currently being processed
+  COMPLETED            /// Job finished successfully
+  FAILED               /// Job failed with an error
+  CANCELED             /// Job was aborted by user or system
+}
+
+/// Represents the status of a support ticket
+enum TicketStatus {
+  OPEN                 /// Ticket created and awaiting action
+  IN_PROGRESS          /// Ticket is being handled by support
+  WAITING_USER         /// Support replied and is waiting for user
+  RESOLVED             /// Issue has been fixed
+  CLOSED               /// Ticket finalized and locked
+}
+
+/// Represents the urgency of a support ticket
+enum TicketPriority {
+  LOW                  /// Non-urgent request
+  NORMAL               /// Standard priority
+  HIGH                 /// Urgent issue
+  URGENT               /// Critical problem requiring immediate attention
+}
+
+/// Represents actions recorded in the audit log
+enum AuditAction {
+  USER_CREATED         /// New user account created
+  USER_UPDATED         /// User profile or settings changed
+  USER_DELETED         /// User account soft-deleted
+  USER_SUSPENDED       /// User account suspended
+  USER_BANNED          /// User account banned
+  USER_ENABLED         /// User account re-enabled
+  PASSWORD_RESET       /// User password changed
+  IMPERSONATION_START  /// Admin started impersonating a user
+  IMPERSONATION_END    /// Admin stopped impersonating a user
+  SUBSCRIPTION_ASSIGNED /// Plan assigned to a user
+  SUBSCRIPTION_CHANGED  /// User changed their plan
+  CREDITS_ADJUSTED     /// User credits manually modified by admin
+  PROMO_CREATED        /// New promo code created
+  PROMO_UPDATED        /// Promo code settings modified
+  PROMO_DELETED        /// Promo code deleted
+  PLAN_CREATED         /// New subscription plan created
+  PLAN_UPDATED         /// Plan details or limits modified
+  SYSTEM_SETTING_CHANGED /// Global system setting modified
+  API_KEY_UPDATED      /// User API key added or updated
+  TICKET_REPLIED       /// Response added to a support ticket
+  ADMIN_LOGIN          /// Admin logged into the control panel
+  ADMIN_LOGOUT         /// Admin logged out
+  EMAIL_TEMPLATE_UPDATED
+  FEATURE_FLAG_CHANGED
+  SERVICE_KEY_TESTED
+  USER_DATA_EXPORTED
+  ADMIN_2FA_SETUP
+  ADMIN_2FA_DISABLED
+}
+
+/// Represents the target audience for an announcement
+enum AnnouncementTarget {
+  ALL                  /// All registered users
+  FREE_USERS           /// Users on a free plan
+  PAID_USERS           /// Users on any paid plan
+  SPECIFIC_PLAN        /// Users on a specific plan
+  SPECIFIC_USERS       /// Specific list of users
+}
+
+/// Represents the publication state of a help article
+enum HelpArticleStatus {
+  DRAFT                /// Article is being written
+  PUBLISHED            /// Article is visible to users
+  ARCHIVED             /// Article is hidden from users
+}
+
+/// Represents the type of discount for a promo code
+enum PromoDiscountType {
+  PERCENT              /// Percentage off the total
+  FIXED                /// Fixed amount off the total
+  TRIAL_DAYS           /// Extension of the free trial period
+  FREE_UPGRADE         /// Free upgrade to a higher tier
+}
+
+/// Represents the severity or category of an announcement
+enum AnnouncementType {
+  INFO                 /// General information
+  WARNING              /// Important alert or caution
+  SUCCESS              /// Positive update or achievement
+  MAINTENANCE          /// Scheduled downtime or maintenance
+}
+
+/// Represents who sent a message in a support ticket
+enum TicketSenderType {
+  USER                 /// Message sent by the customer
+  ADMIN                /// Message sent by support staff
+}
+
+// ═══════════════════════════════════════
+// Models
+// ═══════════════════════════════════════
+
+/// Core user model representing a person registered on the platform
+model User {
+  id                      String            @id @default(cuid()) /// Unique identifier (CUID)
+  email                   String            @unique /// User's email address for login and notifications
+  emailVerified           Boolean           @default(false) /// Whether the user has verified their email
+  emailVerificationToken  String?           /// Token sent to user for email verification
+  emailVerificationExpiry DateTime?         /// When the verification token expires
+  passwordHash            String?           /// Bcrypt hash of the user's password
+  googleId                String?           @unique /// OAuth ID from Google
+  googleAccessToken       String?           /// Active access token from Google
+  googleRefreshToken      String?           /// Refresh token to get new access tokens from Google
+  googleTokenExpiry       DateTime?         /// When the Google access token expires
+  displayName             String?           /// Name shown in the UI
+  bio                     String?           /// User's biography or notes
+  avatarUrl               String?           /// URL to user's profile picture
+  role                    UserRole          @default(USER) /// User's permission level
+  status                  UserStatus        @default(PENDING_VERIFICATION) /// Current state of the user account
+  lastLoginAt             DateTime?         /// Last time the user logged in
+  lastActiveAt            DateTime?         /// Last time the user performed an action
+  loginAttempts           Int               @default(0) /// Counter for failed login attempts
+  lockedUntil             DateTime?         /// Timestamp until which the account is locked
+  storageProvider         StorageProvider   @default(LOCAL) /// Default storage service for this user
+  storageBytesUsed        BigInt            @default(0) /// Total storage used by user in bytes
+  createdAt               DateTime          @default(now()) /// Timestamp when user was created
+  updatedAt               DateTime          @updatedAt /// Timestamp of last user update
+  deletedAt               DateTime?         /// Timestamp of soft deletion
+  onboardingComplete      Boolean           @default(false) /// Whether the user has finished the onboarding tour
+
+  // Relations
+  profile                 Profile?          /// Link to extended profile details
+  sessions                Session[]         /// Active and past user sessions
+  apiKeys                 ApiKey[]          /// AI provider API keys managed by the user
+  projects                Project[]         /// Films and projects created by the user
+  subscription            Subscription?     /// Active plan subscription
+  storageConnection       StorageConnection? /// OAuth connection to Google Drive
+  supportTickets          SupportTicket[]   /// Tickets opened by the user
+  promoRedemptions        PromoRedemption[] /// Promo codes used by the user
+  paymentRecords          PaymentRecord[]   /// History of payments made by user
+  subscriptionUsage       SubscriptionUsage? /// Real-time usage tracking for limits
+  notifications           Notification[]    /// In-app notifications
+
+  @@index([email])
+  @@index([googleId])
+  @@index([status, createdAt])
+  @@index([status, lastActiveAt])
+}
+
+/// Extended user data such as preferences and settings
+model Profile {
+  id                    String   @id @default(cuid()) /// Unique identifier
+  userId                String   @unique /// ID of the owner user
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade) /// Relation to user
+  timezone              String   @default("UTC") /// User's local timezone
+  language              String   @default("en") /// User's preferred language
+  theme                 String   @default("system") /// UI theme: light, dark, or system
+  emailNotifications    Json     @default("{\"projectComplete\": true, \"billing\": true, \"announcements\": true, \"supportReplies\": true}") /// Notification preferences
+  defaultExportFormat   String   @default("mp4") /// Preferred video export format
+  autoSaveInterval      Int      @default(30000) /// Time in ms between project auto-saves
+  defaultPipelineStages Json     @default("[]") /// Default AI stages to enable for new projects
+  createdAt             DateTime @default(now()) /// Creation timestamp
+  updatedAt             DateTime @updatedAt /// Last update timestamp
+}
+
+/// Tracking of active user logins and devices
+model Session {
+  id           String   @id @default(cuid()) /// Unique session ID
+  userId       String   /// ID of the logged-in user
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade) /// Relation to user
+  token        String   @unique /// Active session token (JWT)
+  refreshToken String   @unique /// Token used to refresh the session
+  userAgent    String?  /// Browser/App string of the user
+  ipAddress    String?  /// Last known IP address
+  deviceInfo   Json?    /// Detailed device data parsed from user agent
+  expiresAt    DateTime /// When the session expires
+  lastUsedAt   DateTime @default(now()) /// Last time this session was active
+  createdAt    DateTime @default(now()) /// When session was created
+  isAdmin      Boolean  @default(false) /// Whether this is an admin control panel session
+
+  @@index([userId, expiresAt])
+  @@index([token])
+}
+
+/// Storage for encrypted AI provider API keys
+model ApiKey {
+  id             String    @id @default(cuid()) /// Unique identifier
+  userId         String    /// Owner of the key
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade) /// Relation to user
+  module         AIModule  /// Studio module this key is used for
+  keyType        KeyType   /// Type of key management (BYO or Platform)
+  provider       String    /// Provider name (e.g., "openai", "gemini")
+  encryptedKey   String    /// AES-256 encrypted API key
+  keyHint        String?   /// Last 4 characters of key for display
+  isActive       Boolean   @default(true) /// Whether this key should be used
+  lastTestedAt   DateTime? /// Last time the key was validated
+  lastTestStatus String?   /// Result of the last test ("ok" or "error")
+  lastTestError  String?   /// Error message if the last test failed
+  createdAt      DateTime  @default(now()) /// Creation timestamp
+  updatedAt      DateTime  @updatedAt /// Last update timestamp
+
+  @@index([userId, module])
+  @@index([userId, isActive])
+}
+
+/// Main project entity for a film or production
+model Project {
+  id              String         @id @default(cuid()) /// Unique project ID
+  userId          String         /// Creator of the project
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade) /// Relation to user
+  title           String         /// Name of the project
+  description     String?        /// Brief summary or notes
+  thumbnailUrl    String?        /// URL to the project cover image
+  status          ProjectStatus  @default(DRAFT) /// Current production status
+  genre           String?        /// Film genre (e.g., Sci-Fi, Noir)
+  style           String?        /// Visual style (e.g., Cinematic, Anime)
+  duration        Int?           /// Target duration in seconds
+  pipelineConfig  Json           @default("{}") /// Configuration for AI stages
+  currentStage    String?        /// The stage currently being worked on
+  lastAutoSavedAt DateTime?      /// Last successful auto-save timestamp
+  storagePath     String?        /// Folder path on the storage provider
+  storageProvider StorageProvider @default(LOCAL) /// Where project files are stored
+  storageSizeBytes BigInt         @default(0) /// Total size of project assets in bytes
+  shareToken      String?        @unique /// Unique token for public sharing
+  shareEnabled    Boolean        @default(false) /// Whether public sharing is active
+  createdAt       DateTime       @default(now()) /// Creation timestamp
+  updatedAt       DateTime       @updatedAt /// Last update timestamp
+  archivedAt      DateTime?      /// When the project was archived
+  deletedAt       DateTime?      /// Timestamp of soft deletion
+
+  // Relations
+  versions        ProjectVersion[] /// List of saved project snapshots
+  generationJobs  GenerationJob[]  /// AI tasks associated with this project
+
+  @@index([userId, status])
+  @@index([userId, deletedAt])
+  @@index([shareToken])
+}
+
+/// Snapshots of a project for version control and rollback
+model ProjectVersion {
+  id          String   @id @default(cuid()) /// Unique version ID
+  projectId   String   /// Associated project
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade) /// Relation to project
+  version     Int      /// Incremental version number
+  snapshot    Json     /// Full serialized state of the project
+  createdAt   DateTime @default(now()) /// When this version was saved
+  triggeredBy String   /// Reason for save (e.g., "manual", "autosave")
+}
+
+/// Tracking of asynchronous AI generation tasks
+model GenerationJob {
+  id               String              @id @default(cuid()) /// Unique job ID
+  projectId        String              /// Associated project
+  project          Project             @relation(fields: [projectId], references: [id], onDelete: Cascade) /// Relation to project
+  userId           String              /// User who initiated the job
+  module           AIModule            /// Studio module (e.g., IMAGE_GEN)
+  provider         String              /// AI service used (e.g., "runway")
+  model            String              /// Specific AI model (e.g., "gen-2")
+  status           GenerationJobStatus @default(QUEUED) /// Current job state
+  progress         Int                 @default(0) /// Progress percentage (0-100)
+  inputPayload     Json                /// Data sent to the AI provider
+  outputPayload    Json?               /// Data received from the AI provider
+  errorMessage     String?             /// Description of error if failed
+  retryCount       Int                 @default(0) /// Number of retries attempted
+  maxRetries       Int                 @default(3) /// Maximum allowed retries
+  queuedAt         DateTime            @default(now()) /// When job was added to queue
+  startedAt        DateTime?           /// When processing started
+  completedAt      DateTime?           /// When job finished successfully
+  failedAt         DateTime?           /// When job permanently failed
+  creditsUsed      Int                 @default(0) /// Actual credits consumed
+  estimatedCredits Int                 @default(0) /// Predicted credit cost
+
+  @@index([userId, status])
+  @@index([projectId, status])
+  @@index([status, queuedAt])
+}
+
+/// Definition of subscription tiers and their benefits
+model Plan {
+  id                   String         @id @default(cuid()) /// Unique plan ID
+  name                 String         @unique /// Display name of the plan
+  slug                 String         @unique /// URL-friendly identifier
+  description          String?        /// Detailed plan description
+  priceMonthly         Decimal        @db.Decimal(10, 2) /// Cost per month
+  priceAnnual          Decimal        @db.Decimal(10, 2) /// Cost per year
+  currency             String         @default("USD") /// ISO currency code
+  isActive             Boolean        @default(true) /// Whether plan can be assigned
+  isPublic             Boolean        @default(true) /// Whether plan is shown on pricing page
+  sortOrder            Int            @default(0) /// UI display order
+  trialDays            Int            @default(0) /// Number of free trial days
+  stripePriceIdMonthly String?        /// Stripe API ID for monthly billing
+  stripePriceIdAnnual  String?        /// Stripe API ID for annual billing
+  limits               Json           /// Monthly usage quotas
+  features             Json           /// Enabled features and modules
+  createdAt            DateTime       @default(now()) /// Creation timestamp
+  updatedAt            DateTime       @updatedAt /// Last update timestamp
+
+  // Relations
+  subscriptions        Subscription[] /// Active users on this plan
+}
+
+/// User's active subscription and billing details
+model Subscription {
+  id                   String             @id @default(cuid()) /// Unique subscription ID
+  userId               String             @unique /// Subscriber's user ID
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade) /// Relation to user
+  planId               String             /// Associated plan tier
+  plan                 Plan               @relation(fields: [planId], references: [id]) /// Relation to plan
+  status               SubscriptionStatus @default(ACTIVE) /// Current billing status
+  billingCycle         BillingCycle       /// frequency of billing
+  currentPeriodStart   DateTime           /// Start of the current billing cycle
+  currentPeriodEnd     DateTime           /// End of the current billing cycle
+  canceledAt           DateTime?          /// When user requested cancellation
+  cancelAtPeriodEnd    Boolean            @default(false) /// Whether to terminate at cycle end
+  trialStart           DateTime?          /// Start of free trial
+  trialEnd             DateTime?          /// End of free trial
+  gatewaySubscriptionId String?           /// ID from the payment gateway (e.g., Stripe)
+  gateway              PaymentGateway     @default(STRIPE) /// Payment processor used
+  promoCodeId          String?            /// Active promo code ID
+  promoCode            PromoCode?         @relation(fields: [promoCodeId], references: [id]) /// Relation to promo
+  discountPercent      Decimal?           @db.Decimal(5, 2) /// Percentage discount applied
+  discountFixed        Decimal?           @db.Decimal(10, 2) /// Fixed amount discount applied
+  manuallyAssigned     Boolean            @default(false) /// Whether admin granted this plan
+  assignedByAdminId    String?            /// Admin ID who granted the plan
+  gracePeriodEnd       DateTime?          /// End of grace period for late payment
+  createdAt            DateTime           @default(now()) /// Creation timestamp
+  updatedAt            DateTime           @updatedAt /// Last update timestamp
+
+  // Relations
+  usage                SubscriptionUsage? /// Real-time quota tracking
+  paymentRecords       PaymentRecord[]    /// Payment history for this sub
+  promoRedemptions     PromoRedemption[]  /// Record of used promo codes
+
+  @@index([userId])
+  @@index([status, currentPeriodEnd])
+  @@index([gatewaySubscriptionId])
+}
+
+/// Real-time tracking of user usage against plan limits
+model SubscriptionUsage {
+  id                 String       @id @default(cuid()) /// Unique usage ID
+  subscriptionId     String       @unique /// Associated subscription
+  subscription       Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade) /// Relation to sub
+  userId             String       @unique /// User being tracked
+  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade) /// Relation to user
+  creditsUsed        Int          @default(0) /// Total credits spent this month
+  creditsLimit       Int          /// Maximum credits allowed per month
+  storageUsedBytes   BigInt       @default(0) /// Total bytes stored across all projects
+  storageLimitBytes  BigInt       /// Maximum storage allowance in bytes
+  exportsCount       Int          @default(0) /// Number of video exports this month
+  exportsLimit       Int          /// Maximum exports allowed per month
+  projectsCount      Int          @default(0) /// Total active projects
+  projectsLimit      Int          /// Maximum projects allowed
+  periodStart        DateTime     /// Start of tracking period
+  periodEnd          DateTime     /// End of tracking period
+  lastResetAt        DateTime     @default(now()) /// Last time counters were zeroed
+  updatedAt          DateTime     @updatedAt /// Last update timestamp
+}
+
+/// Record of individual payments and invoices
+model PaymentRecord {
+  id                   String         @id @default(cuid()) /// Unique payment ID
+  subscriptionId       String         /// Associated subscription
+  subscription         Subscription   @relation(fields: [subscriptionId], references: [id], onDelete: Cascade) /// Relation to sub
+  userId               String         /// Payer user ID
+  user                 User           @relation(fields: [userId], references: [id], onDelete: Cascade) /// Relation to user
+  gateway              PaymentGateway /// Gateway used
+  gatewayPaymentId     String?        /// Transaction ID from gateway
+  amount               Decimal        @db.Decimal(10, 2) /// Total paid
+  currency             String         /// ISO currency code
+  status               PaymentStatus  /// Result of the transaction
+  invoiceUrl           String?        /// URL to view online invoice
+  invoicePdf           String?        /// URL to download PDF invoice
+  promoCodeId          String?        /// Promo code used for this payment
+  promoCode            PromoCode?     @relation(fields: [promoCodeId], references: [id]) /// Relation to promo
+  discountAmount       Decimal        @default(0) @db.Decimal(10, 2) /// Total discount value
+  paidAt               DateTime?      /// Successful payment timestamp
+  failedAt             DateTime?      /// Failed payment timestamp
+  refundedAt           DateTime?      /// Refund timestamp
+  metadata             Json?          /// Raw data from payment gateway
+  createdAt            DateTime       @default(now()) /// Record creation timestamp
+}
+
+/// Management of promotional offers and discounts
+model PromoCode {
+  id                   String            @id @default(cuid()) /// Unique promo ID
+  code                 String            @unique /// The code user enters (e.g., WELCOME50)
+  description          String?           /// Admin notes about the offer
+  discountType         PromoDiscountType /// Nature of the discount
+  discountValue        Decimal           @db.Decimal(10, 2) /// Amount or percentage
+  freeUpgradePlanId    String?           /// Target plan for upgrade promos
+  trialDays            Int?              /// Extra days for trial promos
+  appliesToPlanIds     Json              @default("[]") /// Plans that accept this code
+  maxTotalRedemptions  Int               @default(0) /// Global usage limit (0=unlimited)
+  currentRedemptions   Int               @default(0) /// Current usage count
+  maxPerUser           Int               @default(1) /// Max uses per account
+  startsAt             DateTime?         /// When offer becomes valid
+  expiresAt            DateTime?         /// When offer ends
+  isActive             Boolean           @default(true) /// Admin toggle for the offer
+  stackable            Boolean           @default(false) /// Whether it can be used with others
+  firstTimeOnly        Boolean           @default(true) /// Only for new subscriptions
+  referrerId           String?           /// Reserved for future referral system (Phase 20). Currently unused.
+  createdAt            DateTime          @default(now()) /// Creation timestamp
+  updatedAt            DateTime          @updatedAt /// Last update timestamp
+  createdByAdminId     String            /// Admin who created the offer
+
+  // Relations
+  redemptions          PromoRedemption[] /// Individual use records
+  subscriptions        Subscription[]    /// Active subs using this code
+  paymentRecords       PaymentRecord[]   /// Payments using this code
+
+  @@index([code])
+  @@index([isActive, expiresAt])
+}
+
+/// Individual usage record of a promo code
+model PromoRedemption {
+  id               String       @id @default(cuid()) /// Unique redemption ID
+  promoCodeId      String       /// The code used
+  promoCode        PromoCode    @relation(fields: [promoCodeId], references: [id]) /// Relation to promo
+  userId           String       /// User who used the code
+  user             User         @relation(fields: [userId], references: [id]) /// Relation to user
+  subscriptionId   String?      /// Associated subscription
+  subscription     Subscription? @relation(fields: [subscriptionId], references: [id]) /// Relation to sub
+  discountApplied  Decimal      @db.Decimal(10, 2) /// Actual value saved
+  redeemedAt       DateTime     @default(now()) /// Usage timestamp
+}
+
+/// OAuth connection details for Google Drive storage
+model StorageConnection {
+  id                   String          @id @default(cuid()) /// Unique connection ID
+  userId               String          @unique /// Owner of the connection
+  user                 User            @relation(fields: [userId], references: [id], onDelete: Cascade) /// Relation to user
+  provider             StorageProvider @default(GOOGLE_DRIVE) /// Service provider
+  encryptedAccessToken String          /// AES-256 encrypted Google token
+  encryptedRefreshToken String         /// AES-256 encrypted refresh token
+  expiresAt            DateTime        /// When access token expires
+  quotaBytes           BigInt?         /// Total space available on Drive
+  usedBytes            BigInt?         /// Current space used on Drive
+  rootFolderId         String?         /// ID of the DirectorByte folder on Drive
+  syncEnabled          Boolean         @default(true) /// Whether to auto-upload assets
+  lastSyncedAt         DateTime?       /// Last successful sync timestamp
+  createdAt            DateTime        @default(now()) /// Creation timestamp
+  updatedAt            DateTime        @updatedAt /// Last update timestamp
+}
+
+/// Global configuration key-value store
+model SystemSetting {
+  key              String   @id /// Unique setting identifier (e.g., "app.name")
+  value            String   /// JSON-serialized setting value
+  description      String?  /// Explanation of what this setting controls
+  isSecret         Boolean  @default(false) /// Whether to mask value in UI
+  updatedAt        DateTime @updatedAt /// Last change timestamp
+  updatedByAdminId String?  /// Admin who made the last change
+}
+
+/// Tracking of active admin logins
+model AdminSession {
+  id        String   @id @default(cuid()) /// Unique session ID
+  token     String   @unique /// Secure session token
+  ipAddress String?  /// Last known IP
+  userAgent String?  /// Browser info
+  totpVerified Boolean @default(false) /// Whether this session was created after TOTP verification
+  createdAt DateTime @default(now()) /// Login timestamp
+  expiresAt DateTime /// When session expires
+}
+
+/// Comprehensive log of all administrative actions
+model AuditLog {
+  id               String      @id @default(cuid()) /// Unique log ID
+  action           AuditAction /// Type of action performed
+  adminId          String      /// Denormalized ID of the admin
+  targetUserId     String?     /// User affected by the action
+  targetResource   String?     /// Name of the affected model
+  targetResourceId String?     /// ID of the affected record
+  details          Json?       /// Detailed diff or context of change
+  ipAddress        String?     /// Admin's IP address
+  userAgent        String?     /// Admin's browser string
+  createdAt        DateTime    @default(now()) /// Event timestamp
+
+  @@index([action, createdAt])
+  @@index([targetUserId, createdAt])
+  @@index([adminId, createdAt])
+}
+
+/// Platform-wide announcements and alerts
+model Announcement {
+  id               String             @id @default(cuid()) /// Unique announcement ID
+  title            String             /// Heading of the message
+  body             String             /// Message content (HTML supported)
+  type             AnnouncementType   @default(INFO) /// Severity/Category
+  target           AnnouncementTarget @default(ALL) /// Who should see this
+  targetPlanId     String?            /// Specific plan to target
+  targetUserIds    Json               @default("[]") /// Specific users to target
+  dismissible      Boolean            @default(true) /// Whether user can hide the alert
+  startsAt         DateTime?          /// When to show the announcement
+  expiresAt        DateTime?          /// When to hide the announcement
+  isActive         Boolean            @default(true) /// Admin toggle
+  createdAt        DateTime           @default(now()) /// Creation timestamp
+  updatedAt        DateTime           @updatedAt /// Last update timestamp
+  createdByAdminId String             /// Creator admin ID
+}
+
+/// Categories for organizing help articles
+model HelpCategory {
+  id          String        @id @default(cuid()) /// Unique category ID
+  name        String        /// Display name (e.g., "Getting Started")
+  slug        String        @unique /// URL-friendly ID
+  description String?       /// Brief explanation of category
+  icon        String?       /// Lucide icon name or SVG
+  sortOrder   Int           @default(0) /// UI display order
+  isPublic    Boolean       @default(true) /// Visibility toggle
+  articles    HelpArticle[] /// Articles in this category
+}
+
+/// Knowledge base articles for user support
+model HelpArticle {
+  id             String            @id @default(cuid()) /// Unique article ID
+  categoryId     String            /// Organizing category
+  category       HelpCategory      @relation(fields: [categoryId], references: [id]) /// Relation to category
+  title          String            /// Article heading
+  slug           String            @unique /// URL-friendly ID
+  body           String            /// Content in rich text or HTML
+  excerpt        String?           /// Short summary for search results
+  status         HelpArticleStatus @default(DRAFT) /// Publication state
+  tags           Json              @default("[]") /// Keywords for search
+  views          Int               @default(0) /// Total read count
+  helpful        Int               @default(0) /// "Was this helpful?" Yes count
+  notHelpful     Int               @default(0) /// "Was this helpful?" No count
+  searchable     Boolean           @default(true) /// Whether to include in search
+  publishedAt    DateTime?         /// Publication timestamp
+  createdAt      DateTime          @default(now()) /// Creation timestamp
+  updatedAt      DateTime          @updatedAt /// Last update timestamp
+  authorAdminId  String            /// Creator admin ID
+}
+
+/// User-initiated support requests
+model SupportTicket {
+  id                String         @id @default(cuid()) /// Unique ticket ID
+  userId            String         /// Requester user ID
+  user              User           @relation(fields: [userId], references: [id]) /// Relation to user
+  subject           String         /// Brief summary of the issue
+  status            TicketStatus   @default(OPEN) /// Current ticket state
+  priority          TicketPriority @default(NORMAL) /// Urgency level
+  category          String         /// Type of issue (e.g., "billing")
+  assignedToAdminId String?        /// Staff member handling the ticket
+  lastRepliedAt     DateTime?      /// Last message timestamp
+  firstResponseAt   DateTime?      /// Time of first staff reply
+  slaBreached       Boolean        @default(false) /// Whether response target was missed
+  autoCloseAt       DateTime?      /// Scheduled timestamp for closure
+  createdAt         DateTime       @default(now()) /// Creation timestamp
+  updatedAt         DateTime       @updatedAt /// Last update timestamp
+  closedAt          DateTime?      /// Closure timestamp
+
+  messages          TicketMessage[] /// Conversation history
+  internalNotes     TicketInternalNote[] /// Private staff-only notes
+
+  @@index([userId, status])
+  @@index([status, priority])
+  @@index([assignedToAdminId, status])
+}
+
+/// Messages within a support ticket conversation
+model TicketMessage {
+  id             String           @id @default(cuid()) /// Unique message ID
+  ticketId       String           /// Associated ticket
+  ticket         SupportTicket    @relation(fields: [ticketId], references: [id], onDelete: Cascade) /// Relation to ticket
+  senderType     TicketSenderType /// Role of the sender
+  senderId       String           /// ID of the sender (user or admin)
+  body           String           /// Message content
+  attachmentUrls Json             @default("[]") /// URLs to uploaded files
+  isRead         Boolean          @default(false) /// Whether the recipient saw the message
+  createdAt      DateTime         @default(now()) /// Sent timestamp
+}
+
+/// Private notes on a support ticket visible only to admins
+model TicketInternalNote {
+  id        String        @id @default(cuid()) /// Unique note ID
+  ticketId  String        /// Associated ticket
+  ticket    SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade) /// Relation to ticket
+  adminId   String        /// Admin who wrote the note
+  body      String        /// Note content
+  createdAt DateTime      @default(now()) /// Creation timestamp
+}
+
+/// In-app notifications for users
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   /// Notification type - determines icon and color in UI
+  title     String
+  body      String
+  link      String?  /// Optional deep-link within the app
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+}
+
+/// Saved responses for admin support
+model CannedResponse {
+  id               String   @id @default(cuid())
+  title            String   /// Display title shown in the dropdown when picking a canned response
+  body             String   @db.Text /// Full reply body (may include {{ticketId}}, {{userName}} placeholders)
+  category         String   @default("general") /// Category for grouping: "billing", "technical", "account", "general"
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  createdByAdminId String
+
+  @@index([category, isActive])
+}
+
+/// Editable email templates stored in DB. Falls back to file-based .hbs if DB entry is null.
+model EmailTemplate {
+  key              String   @id /// Key matches the template name: "welcome", "verify-email", "password-reset", etc.
+  subject          String
+  htmlBody         String   @db.Text /// Full HTML body. Supports Handlebars syntax
+  variables        Json     @default("[]") /// Available variables listed for admin reference (JSON array of strings)
+  isActive         Boolean  @default(true)
+  updatedAt        DateTime @updatedAt
+  updatedByAdminId String?
+}

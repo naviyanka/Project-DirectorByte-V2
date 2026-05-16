@@ -1,0 +1,38 @@
+.adminTheme {
+  --color-brand-400: #F59E0B; /* Amber/Gold accent for Admin */
+  --color-brand-500: #D97706;
+  --color-brand-600: #B45309;
+  --shadow-brand: 0 0 20px rgba(245, 158, 11, 0.25);
+}
+
+.adminBanner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background-color: var(--color-brand-400);
+  color: var(--color-text-inverse);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-size: 11px;
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  z-index: 100;
+}
+
+/* Adjust Topbar and Sidebar for banner */
+:global(.topbar) {
+  top: 24px !important;
+}
+
+:global(.sidebar) {
+  top: 24px !important;
+}
+
+:global(.mainWrapper) {
+  padding-top: 24px;
+}

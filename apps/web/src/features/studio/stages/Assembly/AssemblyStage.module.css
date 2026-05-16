@@ -1,0 +1,162 @@
+.previewCard {
+  background-color: var(--color-surface-900);
+  border: 1px solid var(--color-surface-700);
+}
+
+.previewContent {
+  aspect-ratio: 16/9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+  position: relative;
+}
+
+.previewPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.previewControls {
+  padding: var(--space-4) var(--space-6);
+  display: flex;
+  align-items: center;
+  background-color: var(--color-surface-800);
+  border-top: 1px solid var(--color-surface-700);
+}
+
+.mainPlayBtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--color-brand-400);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--duration-fast);
+}
+
+.mainPlayBtn:hover {
+  transform: scale(1.05);
+  background-color: var(--color-brand-300);
+}
+
+.previewProgress {
+  height: 4px;
+  background-color: var(--color-surface-700);
+  border-radius: 2px;
+  position: relative;
+}
+
+.progressFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: var(--color-brand-400);
+  border-radius: 2px;
+}
+
+.timelineCard {
+  background-color: var(--color-surface-100);
+  overflow: hidden;
+}
+
+.timelineHeader {
+  display: flex;
+  border-bottom: var(--border-default);
+}
+
+.trackLabels {
+  width: 120px;
+  background-color: var(--color-surface-200);
+  border-right: var(--border-default);
+}
+
+.trackLabel {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-4);
+  font-size: 11px;
+  font-weight: var(--font-bold);
+  color: var(--color-text-tertiary);
+  border-bottom: 1px solid var(--color-surface-300);
+}
+
+.timelineRuler {
+  flex: 1;
+  height: 32px;
+  display: flex;
+  background-color: var(--color-surface-100);
+}
+
+.rulerMark {
+  flex: 1;
+  border-left: 1px solid var(--color-surface-200);
+  padding: 4px;
+  font-size: 9px;
+  color: var(--color-text-tertiary);
+}
+
+.timelineContent {
+  display: flex;
+  min-height: 200px;
+}
+
+.tracks {
+  flex: 1;
+  position: relative;
+  background-image: linear-gradient(var(--color-surface-200) 1px, transparent 1px);
+  background-size: 100% 48px;
+}
+
+.track {
+  height: 48px;
+  position: relative;
+}
+
+.clip {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-3);
+  font-size: 10px;
+  font-weight: var(--font-bold);
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: var(--shadow-sm);
+  cursor: grab;
+}
+
+.clip:active {
+  cursor: grabbing;
+}
+
+.playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: var(--color-brand-400);
+  z-index: 10;
+}
+
+.playhead::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 10px;
+  height: 10px;
+  background-color: var(--color-brand-400);
+  transform: rotate(45deg);
+}

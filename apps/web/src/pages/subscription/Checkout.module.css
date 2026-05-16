@@ -1,0 +1,137 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--space-12) var(--space-6);
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: var(--space-12);
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-tertiary);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  margin-bottom: var(--space-4);
+  transition: color var(--duration-fast);
+}
+
+.backLink:hover {
+  color: var(--color-brand-400);
+}
+
+.title {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-black);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: var(--space-12);
+  align-items: start;
+}
+
+.content {
+  min-width: 0;
+}
+
+.steps {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-tertiary);
+}
+
+.stepNumber {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--color-surface-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: var(--font-bold);
+  color: var(--color-text-secondary);
+}
+
+.activeStep {
+  color: var(--color-brand-400);
+}
+
+.activeStep .stepNumber {
+  background-color: var(--color-brand-400);
+  color: white;
+}
+
+.stepDivider {
+  height: 1px;
+  background-color: var(--color-surface-200);
+  width: 40px;
+}
+
+.mainCard {
+  padding: var(--space-8);
+}
+
+.sidebar {
+  position: sticky;
+  top: var(--space-24);
+}
+
+.summaryCard {
+  padding: var(--space-6);
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    position: static;
+  }
+}
+
+.successContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 80vh;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.checkmark {
+  width: 80px;
+  height: 80px;
+  background-color: var(--color-success-500);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-8);
+  animation: scale-up 0.5s var(--ease-out-back);
+}
+
+@keyframes scale-up {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}

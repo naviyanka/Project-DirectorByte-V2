@@ -1,0 +1,27 @@
+# Stabilization Checklist
+
+- [x] Resolve "Sign-out on Refresh"
+    - [x] Implement HttpOnly refresh cookies in Auth service
+    - [x] Update Axios interceptors for automatic token refresh
+    - [x] Enable `withCredentials` globally
+- [x] Fix Onboarding Loop
+    - [x] Add `onboardingComplete` to Prisma schema
+    - [x] Run database migrations
+    - [x] Implement `PATCH /user/me` in backend
+    - [x] Wire "Let's go!" button in OnboardingPage to backend
+- [x] Global Service Data Unwrapping
+    - [x] Update Projects service
+    - [x] Update Storage service
+    - [x] Update Billing service
+    - [x] Update API Keys service
+    - [x] Update Notifications service
+    - [x] Update Admin service
+- [x] Prevent UI Rendering Crashes
+    - [x] Add `Array.isArray` check to HomePage project mapping
+    - [x] Add optional chaining to Storage usage display
+    - [x] Add defensive checks to Subscription usage display
+- [x] Functional Button Audit
+    - [x] Verify Sidebar links
+    - [x] Verify Topbar User Menu & Logout
+    - [x] Verify New Project Modal submission
+    - [x] Verify Home Page navigation buttons

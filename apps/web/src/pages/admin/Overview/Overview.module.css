@@ -1,0 +1,52 @@
+.page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.kpiCard {
+  padding: var(--space-6);
+  border-left: 4px solid var(--color-warning-500);
+}
+
+.kpiIcon {
+  width: 40px;
+  height: 40px;
+  background-color: var(--color-surface-950);
+  color: var(--color-warning-500);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: var(--font-bold);
+  padding: 4px 8px;
+  border-radius: var(--radius-full);
+}
+
+.trendUp {
+  background-color: var(--color-success-50);
+  color: var(--color-success-600);
+}
+
+.trendDown {
+  background-color: var(--color-danger-50);
+  color: var(--color-danger-600);
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: var(--space-8);
+}
+
+@media (max-width: 1100px) {
+  .mainGrid {
+    grid-template-columns: 1fr;
+  }
+}

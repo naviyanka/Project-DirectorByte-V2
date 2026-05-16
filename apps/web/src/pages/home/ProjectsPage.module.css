@@ -1,0 +1,104 @@
+.viewToggle {
+  display: flex;
+  background-color: var(--color-surface-200);
+  padding: 2px;
+  border-radius: var(--radius-md);
+}
+
+.toggleBtn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  border-radius: calc(var(--radius-md) - 2px);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.toggleBtn:hover {
+  color: var(--color-text-primary);
+}
+
+.active {
+  background-color: var(--color-surface-400);
+  color: var(--color-brand-400) !important;
+  box-shadow: var(--shadow-sm);
+}
+
+.filterBar {
+  padding: var(--space-4);
+}
+
+.gridCard {
+  padding: 0;
+  overflow: hidden;
+}
+
+.gridCardThumb {
+  aspect-ratio: 16/9;
+  background-color: var(--color-surface-300);
+  position: relative;
+  background-image: linear-gradient(45deg, var(--color-surface-200), var(--color-surface-400));
+}
+
+.gridCardThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.statusBadge {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.table th {
+  padding: var(--space-4) var(--space-6);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-tertiary);
+  border-bottom: var(--border-default);
+  background-color: var(--color-surface-100);
+}
+
+.row {
+  border-bottom: var(--border-default);
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.row:hover {
+  background-color: var(--color-surface-50);
+}
+
+.row td {
+  padding: var(--space-4) var(--space-6);
+}
+
+.listThumb {
+  width: 40px;
+  height: 24px;
+  background-color: var(--color-surface-300);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.listThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

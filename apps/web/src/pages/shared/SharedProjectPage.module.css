@@ -1,0 +1,195 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.header {
+  height: 72px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(13, 13, 15, 0.8);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.logoIcon {
+  font-size: 24px;
+}
+
+.wordmark {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 64px 24px;
+}
+
+.hero {
+  margin-bottom: 64px;
+}
+
+.meta {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.genre, .style, .duration {
+  padding: 4px 10px;
+  background: #1a1a1e;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.title {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 16px;
+}
+
+.description {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  color: #6366f1;
+}
+
+.sectionHeader h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.scriptPreview {
+  padding: 24px;
+  background: #111114;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.keyframesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .keyframesGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.keyframe {
+  aspect-ratio: 16/9;
+  background: #1a1a1e;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+
+.keyframe img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.videoGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.videoCard {
+  aspect-ratio: 16/9;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.videoCard video {
+  width: 100%;
+  height: 100%;
+}
+
+.footerCTA {
+  margin-top: 120px;
+  padding: 64px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), transparent);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 24px;
+  text-align: center;
+}
+
+.footerCTA h3 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.footerCTA p {
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+.loading, .error {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  text-align: center;
+  padding: 24px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(99, 102, 241, 0.1);
+  border-top-color: #6366f1;
+  border-radius: 100%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

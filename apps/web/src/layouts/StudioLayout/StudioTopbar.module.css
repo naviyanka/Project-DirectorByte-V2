@@ -1,0 +1,105 @@
+.topbar {
+  height: 60px;
+  background-color: var(--color-surface-100);
+  border-bottom: var(--border-default);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-6);
+  z-index: 50;
+}
+
+.left, .right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex: 1;
+}
+
+.center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  transition: color var(--duration-fast);
+}
+
+.backBtn:hover {
+  color: var(--color-text-primary);
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background-color: var(--color-surface-400);
+  margin: 0 var(--space-2);
+}
+
+.titleContainer {
+  min-width: 200px;
+}
+
+.title {
+  font-size: var(--text-md);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+}
+
+.titleInput {
+  height: 32px !important;
+  font-weight: var(--font-bold) !important;
+}
+
+.editIcon, .actionIcon {
+  color: var(--color-text-tertiary);
+  transition: color var(--duration-fast);
+}
+
+.editIcon:hover, .actionIcon:hover {
+  color: var(--color-brand-400);
+}
+
+.saveStatus {
+  font-size: 11px;
+  font-weight: var(--font-medium);
+  letter-spacing: 0.02em;
+}
+
+.spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--color-surface-400);
+  border-top-color: var(--color-brand-400);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.moreBtn {
+  color: var(--color-text-tertiary);
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: all var(--duration-fast);
+}
+
+.moreBtn:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-200);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .center {
+    display: none;
+  }
+}

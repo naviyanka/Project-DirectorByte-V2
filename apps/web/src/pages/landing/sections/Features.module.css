@@ -1,0 +1,103 @@
+.features {
+  padding: 120px 24px;
+  background: var(--color-surface-0);
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.title {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 24px;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: var(--color-text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 120px;
+}
+
+.feature {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: 48px;
+}
+
+@media (min-width: 1024px) {
+  .feature {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .feature:nth-child(even) .content {
+    order: 2;
+  }
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(99, 102, 241, 0.1);
+  color: #a5b4fc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.featureTitle {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+.featureDescription {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.visualContainer {
+  background: #1a1a1e;
+  border: var(--border-subtle);
+  border-radius: 20px;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Specific visual placeholders */
+.visualScript { background: linear-gradient(135deg, #1e1b4b 0%, #111114 100%); }
+.visualStoryboard { background: radial-gradient(circle at 30% 30%, #312e81 0%, #111114 100%); }
+.visualVideo { background: linear-gradient(to bottom, #1e1b4b, #000); }
+.visualAudio { background: repeating-linear-gradient(90deg, #111114, #111114 10px, #1a1a1e 10px, #1a1a1e 20px); }
+.visualKeys { background: #111114; }
+.visualCloud { background: #111114; }
+
+.visualContainer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.5) 100%);
+}

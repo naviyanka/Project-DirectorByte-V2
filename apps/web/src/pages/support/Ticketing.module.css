@@ -1,0 +1,95 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--space-8);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-12);
+}
+
+.ticketHeader {
+  border-bottom: 1px solid var(--color-surface-200);
+  padding-bottom: var(--space-8);
+  margin-bottom: var(--space-8);
+}
+
+.thread {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  margin-bottom: var(--space-12);
+}
+
+.message {
+  padding: var(--space-6);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-surface-200);
+  background-color: white;
+  max-width: 85%;
+}
+
+.userMessage {
+  align-self: flex-end;
+  background-color: var(--color-brand-50);
+  border-color: var(--color-brand-100);
+}
+
+.adminMessage {
+  align-self: flex-start;
+  background-color: white;
+  border-color: var(--color-surface-200);
+}
+
+.messageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding-bottom: var(--space-2);
+}
+
+.messageBody {
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.replyArea {
+  position: sticky;
+  bottom: var(--space-8);
+  background-color: white;
+  padding: var(--space-6);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-surface-200);
+  box-shadow: var(--shadow-2xl);
+}
+
+.attachmentZone {
+  border: 2px dashed var(--color-surface-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-text-tertiary);
+  transition: all var(--duration-fast);
+  cursor: pointer;
+}
+
+.attachmentZone:hover {
+  border-color: var(--color-brand-400);
+  background-color: var(--color-brand-50);
+  color: var(--color-brand-600);
+}
+
+@media (max-width: 900px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .message {
+    max-width: 100%;
+  }
+}

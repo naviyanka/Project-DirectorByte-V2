@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@directorbyte/types/*": ["packages/types/src/*"],
+      "@directorbyte/utils/*": ["packages/utils/src/*"],
+      "@directorbyte/config/*": ["packages/config/src/*"]
+    }
+  },
+  "exclude": ["node_modules"]
+}

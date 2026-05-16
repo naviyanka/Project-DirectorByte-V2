@@ -1,0 +1,9 @@
+.landing {
+  min-height: 100vh;
+  background: var(--color-surface-0);
+  color: var(--color-text-primary);
+}
+
+.landing main {
+  position: relative;
+}
