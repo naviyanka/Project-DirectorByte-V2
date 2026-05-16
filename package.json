@@ -12,7 +12,8 @@
     "build": "npx prisma generate --schema=apps/api/prisma/schema.prisma && npm run build --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "db:migrate": "npm run migrate --workspace=api",
-    "db:seed": "npm run seed --workspace=api"
+    "db:seed": "npm run seed --workspace=api",
+    "postinstall": "node apps/web/check-deps.cjs"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.4.0",
