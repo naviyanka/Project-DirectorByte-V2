@@ -12,6 +12,7 @@
     "resolveJsonModule": true,
     "allowJs": true,
     "incremental": true,
+    "ignoreDeprecations": "5.0",
     "baseUrl": ".",
     "paths": {
       "@directorbyte/types/*": ["packages/types/src/*"],
