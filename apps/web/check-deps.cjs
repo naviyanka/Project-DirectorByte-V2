@@ -2,33 +2,40 @@ const fs = require('fs');
 const path = require('path');
 
 console.log('CWD:', process.cwd());
-console.log('Node version:', process.version);
 
-// Detect if we are at root or in apps/web
 const isRoot = fs.existsSync(path.resolve('apps/web'));
 const rootDir = isRoot ? process.cwd() : path.resolve('../../');
+console.log('Root Dir:', rootDir);
 
-console.log('Detected Root Dir:', rootDir);
-
-// Check if vite exists
-const vitePath = path.join(rootDir, 'node_modules/.bin/vite');
-if (fs.existsSync(vitePath)) {
-  console.log('✅ Vite binary found at:', vitePath);
-} else {
-  console.log('❌ Vite binary NOT found at:', vitePath);
-  // List what is in .bin
-  const binDir = path.join(rootDir, 'node_modules/.bin');
-  if (fs.existsSync(binDir)) {
-    console.log('Contents of .bin:', fs.readdirSync(binDir).filter(f => f.includes('vite')));
-  } else {
-    console.log('❌ .bin directory NOT found at:', binDir);
+function findModule(moduleName, startDir) {
+  let currentDir = startDir;
+  while (currentDir !== path.dirname(currentDir)) {
+    const modulePath = path.join(currentDir, 'node_modules', moduleName);
+    if (fs.existsSync(modulePath)) {
+      return modulePath;
+    }
+    currentDir = path.dirname(currentDir);
   }
+  return null;
 }
 
-// Check if plugin-react exists
-const reactPath = path.join(rootDir, 'node_modules/@vitejs/plugin-react');
-if (fs.existsSync(reactPath)) {
-  console.log('✅ @vitejs/plugin-react found at:', reactPath);
+const modulesToCheck = ['vite', '@vitejs/plugin-react', 'react', 'react-dom'];
+
+modulesToCheck.forEach(mod => {
+  const p = findModule(mod, process.cwd());
+  if (p) {
+    console.log(`✅ ${mod} found at: ${p}`);
+  } else {
+    console.log(`❌ ${mod} NOT found in any node_modules up to root`);
+  }
+});
+
+// Also check specifically in apps/web/node_modules
+const webNodeModules = path.join(rootDir, 'apps/web/node_modules');
+if (fs.existsSync(webNodeModules)) {
+  console.log('Contents of apps/web/node_modules/@vitejs:', 
+    fs.existsSync(path.join(webNodeModules, '@vitejs')) ? fs.readdirSync(path.join(webNodeModules, '@vitejs')) : 'NOT FOUND'
+  );
 } else {
-  console.log('❌ @vitejs/plugin-react NOT found at:', reactPath);
+  console.log('❌ apps/web/node_modules NOT found');
 }
