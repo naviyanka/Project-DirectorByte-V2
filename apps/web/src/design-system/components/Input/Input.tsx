@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useState, useId } from 'react';
 import { Eye, EyeOff, Search, X } from 'lucide-react';
 import { cn } from '../../../utils/styles';
 import styles from './Input.module.css';
@@ -31,10 +31,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       fullWidth = true,
       type = 'text',
       onClear,
+      id,
       ...props
     },
     ref
   ) => {
+    const generatedId = useId();
+    const inputId = id || generatedId;
+
     const [showPassword, setShowPassword] = useState(false);
     const isPassword = type === 'password';
     const isSearch = type === 'search';
@@ -43,7 +47,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className={cn(styles.container, fullWidth && styles.fullWidth, className)}>
-        {label && <label className={styles.label}>{label}</label>}
+        {label && <label htmlFor={inputId} className={styles.label}>{label}</label>}
         
         <div className={styles.wrapper}>
           {leftAddon && <div className={styles.addon}>{leftAddon}</div>}
@@ -53,6 +57,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             {leftIcon && !isSearch && <span className={styles.icon}>{leftIcon}</span>}
             
             <input
+              id={inputId}
               ref={ref}
               type={inputType}
               className={styles.input}
@@ -65,6 +70,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 className={styles.actionIcon}
                 onClick={() => setShowPassword(!showPassword)}
                 tabIndex={-1}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                title={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
