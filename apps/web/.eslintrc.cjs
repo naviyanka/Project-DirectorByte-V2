@@ -4,6 +4,10 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
+  ],
+  ignorePatterns: ['dist', '.eslintrc.cjs', 'vite.config.js'],
+  parser: '@typescript-eslint/parser',
+  rules: {
     'plugin:react-hooks/recommended',
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs', 'vite.config.js'],
