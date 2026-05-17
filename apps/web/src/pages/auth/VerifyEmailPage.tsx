@@ -24,6 +24,7 @@ export function VerifyEmailPage() {
     if (token) {
       handleVerify();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   useEffect(() => {
