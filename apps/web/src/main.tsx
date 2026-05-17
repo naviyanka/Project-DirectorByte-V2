@@ -11,6 +11,7 @@ import { ErrorBoundary } from './lib/ErrorBoundary';
 import './design-system/tokens.css';
 import './design-system/base.css';
 
+// eslint-disable-next-line react-refresh/only-export-components
 const Main = () => {
   const checkAuth = useAuthStore((state) => state.checkAuth);
 
@@ -34,8 +35,7 @@ const Main = () => {
   );
 };
 
-ReactDOM.
-createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Main />
   </React.StrictMode>
