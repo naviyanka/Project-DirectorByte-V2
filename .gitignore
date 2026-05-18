@@ -37,3 +37,7 @@ Thumbs.db
 uploads
 temp
 service-account.json
+
+# TypeScript build info
+*.tsbuildinfo
+
