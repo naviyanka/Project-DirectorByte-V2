@@ -6,7 +6,7 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import { requestIdMiddleware } from './middleware/requestId';
 import { errorHandler } from './middleware/errorHandler';
-import { installGuard } from './middleware/installGuard';
+import { installGuard, isInstalled } from './middleware/installGuard';
 import routes from './routes';
 import { safeEnv, getEnv } from './config/env';
 
@@ -35,13 +35,14 @@ export const createApp = () => {
   // Mount API Routes
   app.use('/api/v1', routes);
   
-  // Serve static files from the React app in production
-  if (safeEnv.NODE_ENV === 'production') {
-    const webDistPath = path.join(__dirname, '../../web/dist');
+  // Serve static files from the React app in production or when in Setup/Installer Mode
+  if (safeEnv.NODE_ENV === 'production' || !isInstalled()) {
+    const apiRoot = path.resolve(__dirname, '..');
+    const webDistPath = path.resolve(apiRoot, '../web/dist');
     app.use(express.static(webDistPath));
     
     app.get('*', (req, res) => {
-      res.sendFile(path.join(webDistPath, 'index.html'));
+      res.sendFile(path.resolve(webDistPath, 'index.html'));
     });
   }
 
