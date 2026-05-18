@@ -9,8 +9,9 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import { isInstalled } from '../../middleware/installGuard';
 
-const lockFilePath = path.resolve(__dirname, '../../../../../.install.lock');
-const envFilePath = path.resolve(__dirname, '../../../../.env');
+const apiRoot = path.resolve(__dirname, '../../..');
+const lockFilePath = path.resolve(apiRoot, '../.install.lock');
+const envFilePath = path.resolve(apiRoot, '../.env');
 
 export class InstallController {
   static getStatus(req: Request, res: Response, next: NextFunction) {
@@ -104,7 +105,7 @@ MAX_UPLOAD_SIZE_MB=100
         logger.info('Running migrations...');
         execSync('npx prisma migrate deploy', {
           stdio: 'inherit',
-          cwd: path.resolve(__dirname, '../../../../') // apps/api dir
+          cwd: apiRoot // apps/api dir
         });
         logger.info('Migrations complete.');
       } catch (err: any) {

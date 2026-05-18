@@ -3,8 +3,9 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 // Load api-level .env first (has real secrets), then root as fallback.
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
-dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
+const apiRoot = path.resolve(__dirname, '../..');
+dotenv.config({ path: path.resolve(apiRoot, '.env') });
+dotenv.config({ path: path.resolve(apiRoot, '../.env') });
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),

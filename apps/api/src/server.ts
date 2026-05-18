@@ -11,7 +11,8 @@ import { startAutoCloseJob, stopAutoCloseJob } from './jobs/autoCloseTickets.job
 import { studioWorker } from './services/studio.worker.service';
 
 const isInstalled = () => {
-  const lockFilePath = path.resolve(__dirname, '../../../../.install.lock');
+  const apiRoot = path.resolve(__dirname, '..');
+  const lockFilePath = path.resolve(apiRoot, '../.install.lock');
   return fs.existsSync(lockFilePath);
 };
 

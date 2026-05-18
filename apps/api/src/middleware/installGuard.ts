@@ -3,7 +3,8 @@ import fs from 'fs';
 import path from 'path';
 
 export const isInstalled = () => {
-  const lockFilePath = path.resolve(__dirname, '../../../../../.install.lock');
+  const apiRoot = path.resolve(__dirname, '../..');
+  const lockFilePath = path.resolve(apiRoot, '../.install.lock');
   return fs.existsSync(lockFilePath);
 };
 
