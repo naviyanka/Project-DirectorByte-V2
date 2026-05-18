@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { google } from 'googleapis';
 import { AuthService } from '../services/auth.service';
 import { response } from '../utils/response';
-import { env } from '../config/env';
+import { getEnv } from '../config/env';
 
 export class AuthController {
   static async register(req: Request, res: Response, next: NextFunction) {
@@ -22,7 +22,7 @@ export class AuthController {
       // Set refresh token in HttpOnly cookie
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
-        secure: env.NODE_ENV === 'production',
+        secure: getEnv().NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       });
@@ -36,13 +36,13 @@ export class AuthController {
   // GET /auth/google — redirect browser to Google's consent screen
   static async googleRedirect(req: Request, res: Response, next: NextFunction) {
     try {
-      if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
+      if (!getEnv().GOOGLE_CLIENT_ID || !getEnv().GOOGLE_CLIENT_SECRET) {
         return response.badRequest(res, 'OAUTH_NOT_CONFIGURED', 'Google OAuth is not configured on this server.');
       }
       const oauth2Client = new google.auth.OAuth2(
-        env.GOOGLE_CLIENT_ID,
-        env.GOOGLE_CLIENT_SECRET,
-        env.GOOGLE_REDIRECT_URI
+        getEnv().GOOGLE_CLIENT_ID,
+        getEnv().GOOGLE_CLIENT_SECRET,
+        getEnv().GOOGLE_REDIRECT_URI
       );
       const authUrl = oauth2Client.generateAuthUrl({
         access_type: 'offline',
@@ -61,7 +61,7 @@ export class AuthController {
 
   // GET /auth/google/callback — Google redirects here with ?code=, we redirect to frontend with token
   static async googleCallback(req: Request, res: Response, next: NextFunction) {
-    const FRONTEND_URL = env.APP_URL || 'http://localhost:3000';
+    const FRONTEND_URL = getEnv().APP_URL || 'http://localhost:3000';
     try {
       const { code, error } = req.query;
 

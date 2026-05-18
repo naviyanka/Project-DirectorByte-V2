@@ -4,7 +4,7 @@
  * Implements the PaymentGateway interface using the Stripe SDK.
  */
 import Stripe from 'stripe';
-import { env } from '../../config/env';
+import { getEnv } from '../../config/env';
 import {
   PaymentGateway,
   CheckoutParams,
@@ -18,10 +18,10 @@ let stripeInstance: any = null;
 
 function getStripe(): any {
   if (!stripeInstance) {
-    if (!env.STRIPE_SECRET_KEY) {
+    if (!(getEnv().STRIPE_SECRET_KEY || "")) {
       throw new Error('STRIPE_SECRET_KEY is not configured');
     }
-    stripeInstance = new Stripe(env.STRIPE_SECRET_KEY);
+    stripeInstance = new Stripe((getEnv().STRIPE_SECRET_KEY || ""));
   }
   return stripeInstance;
 }
@@ -129,10 +129,10 @@ export class StripeGateway implements PaymentGateway {
 
   validateWebhook(payload: string | Buffer, signature: string): WebhookEvent {
     const stripe = getStripe();
-    if (!env.STRIPE_WEBHOOK_SECRET) {
+    if (!(getEnv().STRIPE_WEBHOOK_SECRET || "")) {
       throw new Error('STRIPE_WEBHOOK_SECRET is not configured');
     }
-    const event = stripe.webhooks.constructEvent(payload, signature, env.STRIPE_WEBHOOK_SECRET);
+    const event = stripe.webhooks.constructEvent(payload, signature, (getEnv().STRIPE_WEBHOOK_SECRET || ""));
     return { type: event.type, data: event.data.object as Record<string, any>, rawEvent: event };
   }
 }

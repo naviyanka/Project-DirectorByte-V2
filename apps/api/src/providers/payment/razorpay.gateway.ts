@@ -5,7 +5,7 @@
  */
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
-import { env } from '../../config/env';
+import { getEnv } from '../../config/env';
 import {
   PaymentGateway,
   CheckoutParams,
@@ -19,12 +19,12 @@ let razorpayInstance: InstanceType<typeof Razorpay> | null = null;
 
 function getRazorpay(): InstanceType<typeof Razorpay> {
   if (!razorpayInstance) {
-    if (!env.RAZORPAY_KEY_ID || !env.RAZORPAY_KEY_SECRET) {
+    if (!getEnv().RAZORPAY_KEY_ID || !getEnv().RAZORPAY_KEY_SECRET) {
       throw new Error('RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET not configured');
     }
     razorpayInstance = new Razorpay({
-      key_id: env.RAZORPAY_KEY_ID,
-      key_secret: env.RAZORPAY_KEY_SECRET,
+      key_id: getEnv().RAZORPAY_KEY_ID,
+      key_secret: getEnv().RAZORPAY_KEY_SECRET,
     });
   }
   return razorpayInstance;
@@ -111,12 +111,12 @@ export class RazorpayGateway implements PaymentGateway {
   }
 
   validateWebhook(payload: string | Buffer, signature: string): WebhookEvent {
-    if (!env.RAZORPAY_WEBHOOK_SECRET) {
+    if (!(getEnv().RAZORPAY_WEBHOOK_SECRET || "")) {
       throw new Error('RAZORPAY_WEBHOOK_SECRET not configured');
     }
 
     const expectedSig = crypto
-      .createHmac('sha256', env.RAZORPAY_WEBHOOK_SECRET)
+      .createHmac('sha256', (getEnv().RAZORPAY_WEBHOOK_SECRET || ""))
       .update(typeof payload === 'string' ? payload : payload.toString('utf8'))
       .digest('hex');
 

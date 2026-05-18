@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { logger } from '../config/logger';
-import { env } from '../config/env';
+import { getEnv } from '../config/env';
 import { response } from '../utils/response';
 import { AppError } from '../utils/errors';
 
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
   // Log the error
-  if (!err.isOperational || env.NODE_ENV === 'development') {
+  if (!err.isOperational || getEnv().NODE_ENV === 'development') {
     logger.error({ 
       err, 
       reqId: req.id,
@@ -37,6 +37,6 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
   }
 
   // Handle generic / unexpected errors
-  const message = env.NODE_ENV === 'production' ? 'Internal server error' : err.message || 'Internal server error';
+  const message = getEnv().NODE_ENV === 'production' ? 'Internal server error' : err.message || 'Internal server error';
   return response.serverError(res, message);
 };

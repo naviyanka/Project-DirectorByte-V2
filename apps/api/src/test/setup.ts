@@ -29,3 +29,6 @@ beforeEach(async () => {
   const redis = new Redis();
   await redis.flushall();
 });
+
+process.env.ADMIN_SESSION_SECRET = '12345678901234567890123456789012';
+process.env.DATABASE_URL = 'postgresql://user:password@localhost:5432/directorbyte_test';

@@ -1,4 +1,6 @@
-import { env } from './config/env';
+import fs from 'fs';
+import path from 'path';
+import { safeEnv } from './config/env';
 import { logger } from './config/logger';
 import { prisma } from './config/database';
 import { createApp } from './app';
@@ -8,28 +10,43 @@ import { startCleanupJobs, stopCleanupJobs } from './jobs/cleanup.job';
 import { startAutoCloseJob, stopAutoCloseJob } from './jobs/autoCloseTickets.job';
 import { studioWorker } from './services/studio.worker.service';
 
+const isInstalled = () => {
+  const lockFilePath = path.resolve(__dirname, '../../../../.install.lock');
+  return fs.existsSync(lockFilePath);
+};
+
 const startServer = async () => {
   try {
-    // Ensure DB connection is established
-    await prisma.$connect();
-    logger.info('📦 Database connected successfully');
+    const installed = isInstalled();
+
+    if (installed) {
+      // Ensure DB connection is established if installed
+      await prisma.$connect();
+      logger.info('📦 Database connected successfully');
+    } else {
+      logger.warn('⚠️ Application is not installed. Running in Setup Mode.');
+    }
 
     const app = createApp();
     
-    app.listen(env.PORT, () => {
-      logger.info(`🚀 DirectorByte v2 API running on http://localhost:${env.PORT}`);
-      logger.info(`🌍 Environment: ${env.NODE_ENV}`);
+    app.listen(safeEnv.PORT, () => {
+      logger.info(`🚀 DirectorByte v2 API running on http://localhost:${safeEnv.PORT}`);
+      logger.info(`🌍 Environment: ${safeEnv.NODE_ENV}`);
 
-      // Start background jobs
-      startGracePeriodJob();
-      startSubscriptionJobs();
-      startCleanupJobs();
-      startAutoCloseJob();
-      studioWorker.start();
+      if (installed) {
+        // Start background jobs only if installed
+        startGracePeriodJob();
+        startSubscriptionJobs();
+        startCleanupJobs();
+        startAutoCloseJob();
+        studioWorker.start();
+      }
     });
   } catch (error) {
     logger.error({ err: error }, 'Failed to start server');
-    await prisma.$disconnect();
+    if (isInstalled()) {
+      await prisma.$disconnect();
+    }
     process.exit(1);
   }
 };
@@ -37,12 +54,14 @@ const startServer = async () => {
 // Handle graceful shutdown
 const shutdown = async (signal: string) => {
   logger.info(`Received ${signal}. Shutting down gracefully...`);
-  stopGracePeriodJob();
-  stopSubscriptionJobs();
-  stopCleanupJobs();
-  stopAutoCloseJob();
-  studioWorker.stop();
-  await prisma.$disconnect();
+  if (isInstalled()) {
+    stopGracePeriodJob();
+    stopSubscriptionJobs();
+    stopCleanupJobs();
+    stopAutoCloseJob();
+    studioWorker.stop();
+    await prisma.$disconnect();
+  }
   process.exit(0);
 };
 

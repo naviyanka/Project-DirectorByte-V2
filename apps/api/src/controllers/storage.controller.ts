@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/database';
 import { response } from '../utils/response';
 import { NotFoundError, AppError } from '../utils/errors';
-import { env } from '../config/env';
+import { getEnv } from '../config/env';
 import fs from 'fs/promises';
 import path from 'path';
 import { google } from 'googleapis';
@@ -25,8 +25,8 @@ export class StorageController {
         // Attempt to fetch fresh status if connected
         try {
           const oauth2Client = new google.auth.OAuth2(
-            env.GOOGLE_CLIENT_ID,
-            env.GOOGLE_CLIENT_SECRET
+            getEnv().GOOGLE_CLIENT_ID,
+            getEnv().GOOGLE_CLIENT_SECRET
           );
           
           oauth2Client.setCredentials({
@@ -140,7 +140,7 @@ export class StorageController {
       let fileId = '';
 
       if (user.storageProvider === 'LOCAL' || !user.storageConnection) {
-        const uploadDir = path.resolve(env.LOCAL_UPLOAD_PATH, `user_${user.id}`);
+        const uploadDir = path.resolve(getEnv().LOCAL_UPLOAD_PATH, `user_${user.id}`);
         await fs.mkdir(uploadDir, { recursive: true });
 
         const filename = `${Date.now()}_${req.file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
@@ -148,13 +148,13 @@ export class StorageController {
 
         await fs.writeFile(outputPath, req.file.buffer);
 
-        url = `${env.API_URL}/uploads/user_${user.id}/${filename}`;
+        url = `${getEnv().API_URL}/uploads/user_${user.id}/${filename}`;
         fileId = `local_${filename}`;
       } else {
         // Upload to Google Drive
         const oauth2Client = new google.auth.OAuth2(
-          env.GOOGLE_CLIENT_ID,
-          env.GOOGLE_CLIENT_SECRET
+          getEnv().GOOGLE_CLIENT_ID,
+          getEnv().GOOGLE_CLIENT_SECRET
         );
         
         oauth2Client.setCredentials({
@@ -220,7 +220,7 @@ export class StorageController {
 
       if (fileId.startsWith('local_')) {
         const filename = fileId.replace('local_', '');
-        const filePath = path.resolve(env.LOCAL_UPLOAD_PATH, `user_${user.id}`, filename);
+        const filePath = path.resolve(getEnv().LOCAL_UPLOAD_PATH, `user_${user.id}`, filename);
         
         try {
           const stats = await fs.stat(filePath);
@@ -236,8 +236,8 @@ export class StorageController {
         }
 
         const oauth2Client = new google.auth.OAuth2(
-          env.GOOGLE_CLIENT_ID,
-          env.GOOGLE_CLIENT_SECRET
+          getEnv().GOOGLE_CLIENT_ID,
+          getEnv().GOOGLE_CLIENT_SECRET
         );
         
         oauth2Client.setCredentials({

@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { env } from '../config/env';
+import { getEnv } from '../config/env';
 
 export class EncryptionService {
   private static ALGORITHM = 'aes-256-gcm';
@@ -12,7 +12,7 @@ export class EncryptionService {
    */
   static encrypt(plaintext: string): string {
     const iv = crypto.randomBytes(this.IV_LENGTH);
-    const key = Buffer.from(env.ENCRYPTION_KEY, 'utf-8');
+    const key = Buffer.from(getEnv().ENCRYPTION_KEY, 'utf-8');
     
     if (key.length !== 32) {
       throw new Error('ENCRYPTION_KEY must be exactly 32 bytes.');
@@ -37,7 +37,7 @@ export class EncryptionService {
    */
   static decrypt(ciphertext: string): string {
     const combined = Buffer.from(ciphertext, 'base64');
-    const key = Buffer.from(env.ENCRYPTION_KEY, 'utf-8');
+    const key = Buffer.from(getEnv().ENCRYPTION_KEY, 'utf-8');
 
     if (key.length !== 32) {
       throw new Error('ENCRYPTION_KEY must be exactly 32 bytes.');

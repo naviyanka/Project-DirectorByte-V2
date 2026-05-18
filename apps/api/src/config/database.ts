@@ -1,8 +1,26 @@
 import { PrismaClient } from '@prisma/client';
-import { env } from './env';
+import { safeEnv } from './env';
 import { logger } from './logger';
+import fs from 'fs';
+import path from 'path';
+
+const isInstalled = () => {
+  const lockFilePath = path.resolve(__dirname, '../../../../.install.lock');
+  return fs.existsSync(lockFilePath);
+};
 
 const prismaClientSingleton = () => {
+  // If not installed, return a proxy that throws a clear error if used before setup
+  if (!isInstalled()) {
+    return new Proxy({} as PrismaClient, {
+      get: (target, prop) => {
+        if (prop === '$connect') return async () => {};
+        if (prop === '$disconnect') return async () => {};
+        throw new Error(`PrismaClient used before installation (called property: ${String(prop)})`);
+      }
+    });
+  }
+
   return new PrismaClient({
     log: [
       { emit: 'event', level: 'query' },
@@ -19,14 +37,19 @@ declare global {
 
 export const prisma = globalThis.prisma ?? prismaClientSingleton();
 
-if (env.NODE_ENV !== 'production') globalThis.prisma = prisma;
+if (safeEnv.NODE_ENV !== 'production' && isInstalled()) globalThis.prisma = prisma;
 
-prisma.$on('error', (e: any) => {
-  logger.error(e, 'Prisma Client Error');
-});
+if (isInstalled()) {
+  const p = prisma as any;
+  if (p.$on) {
+    p.$on('error', (e: any) => {
+      logger.error(e, 'Prisma Client Error');
+    });
 
-if (env.NODE_ENV === 'development') {
-  prisma.$on('warn', (e: any) => {
-    logger.warn(e, 'Prisma Client Warning');
-  });
+    if (safeEnv.NODE_ENV === 'development') {
+      p.$on('warn', (e: any) => {
+        logger.warn(e, 'Prisma Client Warning');
+      });
+    }
+  }
 }

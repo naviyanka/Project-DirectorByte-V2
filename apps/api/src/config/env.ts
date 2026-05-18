@@ -2,11 +2,10 @@ import { z } from 'zod';
 import dotenv from 'dotenv';
 import path from 'path';
 
-// __dirname = apps/api/src/config
 // Load api-level .env first (has real secrets), then root as fallback.
-// dotenv does NOT override already-set values, so the first file wins.
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });       // api workspace: apps/api/.env  (PRIMARY)
-dotenv.config({ path: path.resolve(__dirname, '../../../../.env') }); // monorepo root: directorbyte-v2/.env (FALLBACK)
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
+
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().default(4000),
@@ -22,8 +21,6 @@ const envSchema = z.object({
   JWT_REFRESH_EXPIRY: z.string().default('30d'),
   ENCRYPTION_KEY: z.string().length(32, 'ENCRYPTION_KEY must be exactly 32 characters'),
 
-  ADMIN_USERNAME: z.string().default('admin'),
-  ADMIN_PASSWORD_HASH: z.string(),
   ADMIN_SESSION_SECRET: z.string().min(32, 'ADMIN_SESSION_SECRET must be at least 32 characters'),
 
   GOOGLE_CLIENT_ID: z.string().optional(),
@@ -52,12 +49,12 @@ const envSchema = z.object({
   RAZORPAY_KEY_SECRET: z.string().optional(),
   RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
 
-  SMTP_HOST: z.string(),
+  SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.coerce.number().default(587),
   SMTP_SECURE: z.coerce.boolean().default(false),
-  SMTP_USER: z.string(),
-  SMTP_PASS: z.string(),
-  EMAIL_FROM: z.string().email(),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  EMAIL_FROM: z.string().email().optional(),
   EMAIL_FROM_NAME: z.string().default('DirectorByte'),
 
   STORAGE_PROVIDER: z.enum(['local', 'gcs', 'drive']).default('local'),
@@ -65,12 +62,28 @@ const envSchema = z.object({
   MAX_UPLOAD_SIZE_MB: z.coerce.number().default(100),
 });
 
-const _env = envSchema.safeParse(process.env);
+type EnvVariables = z.infer<typeof envSchema>;
 
-if (!_env.success) {
-  console.error('❌ Invalid environment variables:');
-  console.error(_env.error.format());
-  process.exit(1);
-}
+let cachedEnv: EnvVariables | null = null;
 
-export const env = _env.data;
+export const getEnv = (): EnvVariables => {
+  if (cachedEnv) return cachedEnv;
+
+  const _env = envSchema.safeParse(process.env);
+  if (!_env.success) {
+    console.error('❌ Invalid environment variables:');
+    console.error(_env.error.format());
+    process.exit(1);
+  }
+
+  cachedEnv = _env.data;
+  return cachedEnv;
+};
+
+// Safe defaults for when env validation fails because we are in pre-install mode
+export const safeEnv = {
+  NODE_ENV: process.env.NODE_ENV || 'development',
+  PORT: parseInt(process.env.PORT || '4000', 10),
+  APP_URL: process.env.APP_URL || 'http://localhost:3000',
+  API_URL: process.env.API_URL || 'http://localhost:4000'
+};

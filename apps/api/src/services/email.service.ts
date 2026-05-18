@@ -1,5 +1,5 @@
 import { transporter } from '../config/email';
-import { env } from '../config/env';
+import { getEnv } from '../config/env';
 import { logger } from '../config/logger';
 import fs from 'fs/promises';
 import path from 'path';
@@ -38,16 +38,16 @@ export const sendEmail = async (to: string, subject: string, templateName: strin
     }
 
     const template = handlebars.compile(source);
-    const html = template({ ...context, appName: env.APP_NAME });
+    const html = template({ ...context, appName: getEnv().APP_NAME });
 
     const mailOptions = {
-      from: `"${env.EMAIL_FROM_NAME}" <${env.EMAIL_FROM}>`,
+      from: `"${getEnv().EMAIL_FROM_NAME}" <${getEnv().EMAIL_FROM}>`,
       to,
       subject,
       html,
     };
 
-    if (env.NODE_ENV === 'development') {
+    if (getEnv().NODE_ENV === 'development') {
       logger.info(`[Email Service] Simulating send to ${to}: ${subject}`);
       // In development, you might not have real SMTP set up, so we just log it.
       // Uncomment below to actually send in dev if SMTP is configured:

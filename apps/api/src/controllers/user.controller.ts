@@ -5,7 +5,7 @@ import { AuthError, NotFoundError } from '../utils/errors';
 import bcrypt from 'bcrypt';
 import { generateEmailToken } from '../utils/tokens';
 import { sendEmail } from '../services/email.service';
-import { env } from '../config/env';
+import { getEnv } from '../config/env';
 import sharp from 'sharp';
 import fs from 'fs/promises';
 import path from 'path';
@@ -128,7 +128,7 @@ export class UserController {
         }
       });
 
-      const link = `${env.APP_URL}/auth/verify-new-email?token=${token}&email=${newEmail}`;
+      const link = `${getEnv().APP_URL}/auth/verify-new-email?token=${token}&email=${newEmail}`;
       await sendEmail(newEmail, 'Verify your new email', 'verify-email', { verificationLink: link });
 
       return response.ok(res, { message: 'Verify your new email to confirm the change' });
@@ -179,7 +179,7 @@ export class UserController {
         return response.badRequest(res, 'NO_FILE', 'No image file provided');
       }
 
-      const uploadDir = path.resolve(env.LOCAL_UPLOAD_PATH, 'avatars');
+      const uploadDir = path.resolve(getEnv().LOCAL_UPLOAD_PATH, 'avatars');
       await fs.mkdir(uploadDir, { recursive: true });
 
       const filename = `user_${req.user!.id}_avatar.webp`;
@@ -191,7 +191,7 @@ export class UserController {
         .toFile(outputPath);
 
       // In a real app with GCS/Drive, we'd upload this buffer to the cloud provider.
-      const avatarUrl = `${env.API_URL}/uploads/avatars/${filename}`;
+      const avatarUrl = `${getEnv().API_URL}/uploads/avatars/${filename}`;
 
       await prisma.user.update({
         where: { id: req.user!.id },

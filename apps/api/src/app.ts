@@ -6,8 +6,9 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import { requestIdMiddleware } from './middleware/requestId';
 import { errorHandler } from './middleware/errorHandler';
+import { installGuard } from './middleware/installGuard';
 import routes from './routes';
-import { env } from './config/env';
+import { safeEnv, getEnv } from './config/env';
 
 export const createApp = () => {
   const app = express();
@@ -18,7 +19,7 @@ export const createApp = () => {
   // Security & Utility Middleware
   app.use(helmet());
   app.use(cors({
-    origin: env.APP_URL || 'http://localhost:3000',
+    origin: safeEnv.APP_URL || 'http://localhost:3000',
     credentials: true,
   }));
   app.use(compression());
@@ -28,11 +29,14 @@ export const createApp = () => {
   // Custom Global Middleware
   app.use(requestIdMiddleware);
 
+  // Install Guard
+  app.use(installGuard);
+
   // Mount API Routes
   app.use('/api/v1', routes);
   
   // Serve static files from the React app in production
-  if (process.env.NODE_ENV === 'production') {
+  if (safeEnv.NODE_ENV === 'production') {
     const webDistPath = path.join(__dirname, '../../web/dist');
     app.use(express.static(webDistPath));
     

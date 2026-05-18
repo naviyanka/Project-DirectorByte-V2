@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { prisma } from '../../config/database';
-import { env } from '../../config/env';
 import { response } from '../../utils/response';
 import { AuthError } from '../../utils/errors';
 
@@ -11,13 +10,21 @@ const SESSION_EXPIRY_HOURS = 4;
 export class AdminAuthController {
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const { username, password } = req.body;
+      const { username, password } = req.body; // 'username' here implies email from the frontend form
 
-      if (username !== env.ADMIN_USERNAME) {
+      // Find user with SUPER_ADMIN / ADMIN role
+      const adminUser = await prisma.user.findFirst({
+        where: {
+          email: username,
+          role: 'ADMIN' // Maps to UserRole.ADMIN in Prisma
+        }
+      });
+
+      if (!adminUser || !adminUser.passwordHash) {
         throw new AuthError('Invalid credentials');
       }
 
-      const isValid = await bcrypt.compare(password, env.ADMIN_PASSWORD_HASH);
+      const isValid = await bcrypt.compare(password, adminUser.passwordHash);
       if (!isValid) {
         throw new AuthError('Invalid credentials');
       }
@@ -55,7 +62,7 @@ export class AdminAuthController {
       if (!session) throw new AuthError('Session not found');
 
       return response.ok(res, {
-        username: env.ADMIN_USERNAME,
+        username: "Admin", // For UI display purposes
         sessionId: session.id,
       });
     } catch (error) { next(error); }

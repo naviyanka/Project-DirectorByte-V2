@@ -1,7 +1,7 @@
 import { prisma } from '../config/database';
 import { logger } from '../config/logger';
 import { getProvider } from '../providers/ai/provider.factory';
-import { env } from '../config/env';
+import { getEnv } from '../config/env';
 import { GenerationJobStatus } from '@prisma/client';
 
 class StudioWorkerService {
@@ -198,19 +198,19 @@ class StudioWorkerService {
 
   private getPlatformKey(providerName: string): string | undefined {
     switch(providerName.toLowerCase()) {
-      case 'runwayml': return env.PLATFORM_RUNWAYML_API_KEY;
+      case 'runwayml': return getEnv().PLATFORM_RUNWAYML_API_KEY;
       case 'kling': 
-        if (env.PLATFORM_KLING_ACCESS_KEY && env.PLATFORM_KLING_SECRET_KEY) {
-          return `${env.PLATFORM_KLING_ACCESS_KEY}:${env.PLATFORM_KLING_SECRET_KEY}`;
+        if (getEnv().PLATFORM_KLING_ACCESS_KEY && getEnv().PLATFORM_KLING_SECRET_KEY) {
+          return `${getEnv().PLATFORM_KLING_ACCESS_KEY}:${getEnv().PLATFORM_KLING_SECRET_KEY}`;
         }
         return undefined;
-      case 'pika': return env.PLATFORM_PIKA_API_KEY;
-      case 'suno': return env.PLATFORM_SUNO_API_KEY;
-      case 'mubert': return env.PLATFORM_MUBERT_API_KEY;
-      case 'elevenlabs': return env.PLATFORM_ELEVENLABS_API_KEY;
+      case 'pika': return getEnv().PLATFORM_PIKA_API_KEY;
+      case 'suno': return getEnv().PLATFORM_SUNO_API_KEY;
+      case 'mubert': return getEnv().PLATFORM_MUBERT_API_KEY;
+      case 'elevenlabs': return getEnv().PLATFORM_ELEVENLABS_API_KEY;
       case 'playht': 
-        if (env.PLATFORM_PLAYHT_USER_ID && env.PLATFORM_PLAYHT_API_KEY) {
-          return `${env.PLATFORM_PLAYHT_USER_ID}:${env.PLATFORM_PLAYHT_API_KEY}`;
+        if (getEnv().PLATFORM_PLAYHT_USER_ID && getEnv().PLATFORM_PLAYHT_API_KEY) {
+          return `${getEnv().PLATFORM_PLAYHT_USER_ID}:${getEnv().PLATFORM_PLAYHT_API_KEY}`;
         }
         return undefined;
       case 'google-tts': return undefined; // Free tier or application default credentials

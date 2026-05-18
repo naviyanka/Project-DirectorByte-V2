@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Shield, Lock, User, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Shield, Lock, Mail, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Input, Card } from '../../design-system/components';
 import { useAdminStore } from '../../store/admin.store';
+import { useToast } from '../../hooks/useToast';
+import axios from '../../lib/axios';
 import { cn } from '../../utils/styles';
 import styles from './AdminLogin.module.css';
 
@@ -13,16 +15,28 @@ export function AdminLoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { loginMock } = useAdminStore();
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!username || !password) {
+      addToast({ title: 'Please enter credentials', type: 'error' });
+      return;
+    }
+
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      loginMock(username || 'admin_navi');
-      setIsSubmitting(false);
+
+    try {
+      const response = await axios.post('/admin/auth/login', { username, password });
+      // In a real app we'd set the token securely, for now we follow the mock setup
+      localStorage.setItem('adminToken', response.data.data.token);
+      loginMock(username);
       navigate('/admin');
-    }, 1500);
+    } catch (error: any) {
+      addToast({ title: 'Login failed', message: error.response?.data?.error?.message || 'Invalid credentials', type: 'error' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -42,11 +56,12 @@ export function AdminLoginPage() {
         <Card className={styles.card}>
           <form onSubmit={handleSubmit} className="space-y-6">
             <Input
-              label="Admin Username"
-              placeholder="e.g. admin_pro"
+              label="Admin Email"
+              type="email"
+              placeholder="admin@directorbyte.com"
               fullWidth
               autoFocus
-              leftIcon={<User size={18} />}
+              leftIcon={<Mail size={18} />}
               value={username}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
               className={styles.adminInput}
@@ -88,7 +103,6 @@ export function AdminLoginPage() {
 
         <footer className={styles.footer}>
           <p>Unauthorized access is prohibited by law.</p>
-          <p>Your IP 43.120.4.15 has been recorded.</p>
         </footer>
       </div>
     </div>

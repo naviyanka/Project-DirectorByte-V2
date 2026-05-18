@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/database';
 import { response } from '../utils/response';
 import { NotFoundError, AppError } from '../utils/errors';
-import { env } from '../config/env';
+import { getEnv } from '../config/env';
 import { getProvider } from '../providers/ai/provider.factory';
 
 export class StudioController {
@@ -98,7 +98,7 @@ export class StudioController {
       const apiKey = await prisma.apiKey.findFirst({
         where: { userId, provider: 'openai', isActive: true }
       });
-      const keyToUse = apiKey?.encryptedKey || process.env.PLATFORM_WHISPER_API_KEY || process.env.PLATFORM_OPENAI_API_KEY;
+      const keyToUse = apiKey?.encryptedKey || getEnv().PLATFORM_WHISPER_API_KEY || (process.env.PLATFORM_OPENAI_API_KEY || "");
       
       if (!keyToUse) {
         throw new AppError('Add an OpenAI API key to use transcription', 402, 'MISSING_API_KEY');
@@ -235,10 +235,10 @@ export class StudioController {
       // In a real implementation we would fetch the user's API key if they provided one
       // For now we try to use the platform key if available
       switch(providerName.toLowerCase()) {
-        case 'elevenlabs': apiKey = env.PLATFORM_ELEVENLABS_API_KEY; break;
+        case 'elevenlabs': apiKey = getEnv().PLATFORM_ELEVENLABS_API_KEY; break;
         case 'playht': 
-          if (env.PLATFORM_PLAYHT_USER_ID && env.PLATFORM_PLAYHT_API_KEY) {
-            apiKey = `${env.PLATFORM_PLAYHT_USER_ID}:${env.PLATFORM_PLAYHT_API_KEY}`;
+          if (getEnv().PLATFORM_PLAYHT_USER_ID && getEnv().PLATFORM_PLAYHT_API_KEY) {
+            apiKey = `${getEnv().PLATFORM_PLAYHT_USER_ID}:${getEnv().PLATFORM_PLAYHT_API_KEY}`;
           }
           break;
         case 'google-tts': apiKey = undefined; break;

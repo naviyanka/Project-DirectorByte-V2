@@ -3,6 +3,9 @@ import { EncryptionService } from '../../services/encryption.service';
 
 // Mock env.ENCRYPTION_KEY since it's imported in the service
 vi.mock('../../config/env', () => ({
+  getEnv: () => ({
+    ENCRYPTION_KEY: '12345678901234567890123456789012'
+  }),
   env: {
     ENCRYPTION_KEY: '12345678901234567890123456789012'
   }

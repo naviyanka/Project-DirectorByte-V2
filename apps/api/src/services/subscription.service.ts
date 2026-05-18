@@ -18,7 +18,7 @@ import { AppError, ForbiddenError } from '../utils/errors';
 import { StripeGateway } from '../providers/payment/stripe.gateway';
 import { PromoService } from './promo.service';
 import { UsageService } from './usage.service';
-import { env } from '../config/env';
+import { getEnv } from '../config/env';
 import { Decimal } from '@prisma/client/runtime/library';
 
 const GRACE_PERIOD_DAYS = 7;
@@ -133,8 +133,8 @@ export class SubscriptionService {
       currency: plan.currency, customerEmail: user.email,
       trialDays: trialDays > 0 ? trialDays : undefined,
       couponId,
-      successUrl: `${env.APP_URL}/dashboard?checkout=success`,
-      cancelUrl: `${env.APP_URL}/pricing?checkout=canceled`,
+      successUrl: `${getEnv().APP_URL}/dashboard?checkout=success`,
+      cancelUrl: `${getEnv().APP_URL}/pricing?checkout=canceled`,
     });
 
     return { checkoutUrl: session.checkoutUrl };
@@ -396,7 +396,7 @@ export class SubscriptionService {
     }
 
     const gateway = getGateway();
-    return gateway.createPortalSession(sub.gatewayCustomerId, `${env.APP_URL}/settings?tab=subscription`);
+    return gateway.createPortalSession(sub.gatewayCustomerId, `${getEnv().APP_URL}/settings?tab=subscription`);
   }
 
   /**

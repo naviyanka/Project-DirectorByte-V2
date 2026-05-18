@@ -8,7 +8,7 @@ import {
 } from '../utils/tokens';
 import bcrypt from 'bcrypt';
 import { sendEmail } from './email.service';
-import { env } from '../config/env';
+import { getEnv } from '../config/env';
 import { google } from 'googleapis';
 import { EncryptionService } from './encryption.service';
 
@@ -37,8 +37,8 @@ export class AuthService {
           displayName,
           emailVerificationToken,
           emailVerificationExpiry,
-          emailVerified: env.NODE_ENV === 'development', // Auto-verify in development
-          status: env.NODE_ENV === 'development' ? 'ACTIVE' : 'PENDING_VERIFICATION',
+          emailVerified: getEnv().NODE_ENV === 'development', // Auto-verify in development
+          status: getEnv().NODE_ENV === 'development' ? 'ACTIVE' : 'PENDING_VERIFICATION',
           profile: {
             create: {}
           }
@@ -80,7 +80,7 @@ export class AuthService {
     });
 
     // Send verification email (non-blocking — a failed email should never block account creation)
-    const verificationLink = `${env.APP_URL}/verify-email?token=${emailVerificationToken}`;
+    const verificationLink = `${getEnv().APP_URL}/verify-email?token=${emailVerificationToken}`;
     sendEmail(email, 'Verify your DirectorByte email', 'verify-email', { verificationLink })
       .catch((err) => console.error('[AuthService.register] Failed to send verification email:', err.message));
 
@@ -103,11 +103,11 @@ export class AuthService {
       throw new AuthError('Invalid email or password');
     }
 
-    if (!user.emailVerified && env.NODE_ENV !== 'development') {
+    if (!user.emailVerified && getEnv().NODE_ENV !== 'development') {
       throw new AuthError('Please verify your email first');
     }
 
-    if (user.status !== 'ACTIVE' && env.NODE_ENV !== 'development') {
+    if (user.status !== 'ACTIVE' && getEnv().NODE_ENV !== 'development') {
       throw new AuthError(`Account is ${user.status.toLowerCase()}`);
     }
 
@@ -227,14 +227,14 @@ export class AuthService {
   }
 
   static async googleLogin(code: string, reqInfo: { ip: string, userAgent: string }) {
-    if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
+    if (!getEnv().GOOGLE_CLIENT_ID || !getEnv().GOOGLE_CLIENT_SECRET) {
       throw new Error('Google OAuth is not configured');
     }
 
     const oauth2Client = new google.auth.OAuth2(
-      env.GOOGLE_CLIENT_ID,
-      env.GOOGLE_CLIENT_SECRET,
-      env.GOOGLE_REDIRECT_URI
+      getEnv().GOOGLE_CLIENT_ID,
+      getEnv().GOOGLE_CLIENT_SECRET,
+      getEnv().GOOGLE_REDIRECT_URI
     );
 
     const { tokens } = await oauth2Client.getToken(code);

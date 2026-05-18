@@ -13,7 +13,7 @@ import { PlayHTProvider } from './tts/playht.provider';
 import { GoogleTTSProvider } from './tts/googletts.provider';
 import { MockVideoProvider, MockAudioProvider, MockVoiceoverProvider } from './mock.provider';
 import { AppError } from '../../utils/errors';
-import { env } from '../../config/env';
+import { getEnv } from '../../config/env';
 
 const providers: Record<string, new (apiKey: string) => AIProvider> = {
   gemini: GeminiProvider,
@@ -39,7 +39,7 @@ export function getProvider(providerName: string, apiKey?: string): AIProvider {
   }
 
   if (!apiKey) {
-    if (env.NODE_ENV === 'development') {
+    if (getEnv().NODE_ENV === 'development') {
       // Use mock providers for testing without keys in dev
       if (['runwayml', 'kling', 'pika'].includes(nameLower)) return new MockVideoProvider();
       if (['suno', 'mubert'].includes(nameLower)) return new MockAudioProvider();

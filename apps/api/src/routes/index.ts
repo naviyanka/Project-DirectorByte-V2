@@ -1,7 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../config/database';
-import { env } from '../config/env';
+import { safeEnv } from '../config/env';
 import authRoutes from './auth.routes';
+import installRoutes from './install/install.routes';
 import userRoutes from './user.routes';
 import apikeyRoutes from './apikey.routes';
 import projectRoutes from './project.routes';
@@ -43,11 +44,12 @@ router.get('/health', async (req: Request, res: Response) => {
 router.get('/version', (req: Request, res: Response) => {
   res.json({
     version: '2.0.0',
-    environment: env.NODE_ENV,
+    environment: safeEnv.NODE_ENV,
   });
 });
 
 // Mount routes
+router.use('/install', installRoutes);
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/api-keys', apikeyRoutes);

@@ -35,273 +35,279 @@ const SharedProjectPage = React.lazy(() => import('../pages/shared/SharedProject
 import { AdminLayout } from '../layouts/AdminLayout/AdminLayout';
 import { RequireAuth, RequireGuest, RequireOnboarding } from './AuthGuards';
 import { RequireAdminAuth } from './AdminGuards';
+import { InstallGuard } from './InstallGuard/InstallGuard';
+const InstallPage = React.lazy(() => import('../pages/install/InstallPage').then(m => ({ default: m.InstallPage })));
 import { AppLayout } from '../layouts/AppLayout';
 
 export const router = createBrowserRouter([
   {
+    path: '/install',
+    element: <InstallGuard><InstallPage /></InstallGuard>,
+  },
+  {
     path: '/',
-    element: <LandingPage />,
+    element: <InstallGuard><LandingPage /></InstallGuard>,
   },
   {
     path: '/shared/:token',
-    element: <SharedProjectPage />,
+    element: <InstallGuard><SharedProjectPage /></InstallGuard>,
   },
   {
     path: '/checkout',
     element: (
-      <RequireAuth>
+      <InstallGuard><RequireAuth>
         <CheckoutPage />
-      </RequireAuth>
+      </RequireAuth></InstallGuard>
     ),
   },
   {
     path: '/checkout/success',
     element: (
-      <RequireAuth>
+      <InstallGuard><RequireAuth>
         <CheckoutSuccessPage />
-      </RequireAuth>
+      </RequireAuth></InstallGuard>
     ),
   },
   {
     path: '/pricing',
-    element: <PricingPage />,
+    element: <InstallGuard><PricingPage /></InstallGuard>,
   },
   {
     path: '/support',
     element: (
-      <RequireAuth>
+      <InstallGuard><RequireAuth>
         <AppLayout>
           <SupportHomePage />
         </AppLayout>
-      </RequireAuth>
+      </RequireAuth></InstallGuard>
     ),
   },
   {
     path: '/support/category/:slug',
     element: (
-      <RequireAuth>
+      <InstallGuard><RequireAuth>
         <AppLayout>
           <CategoryPage />
         </AppLayout>
-      </RequireAuth>
+      </RequireAuth></InstallGuard>
     ),
   },
   {
     path: '/support/article/:slug',
     element: (
-      <RequireAuth>
+      <InstallGuard><RequireAuth>
         <AppLayout>
           <ArticlePage />
         </AppLayout>
-      </RequireAuth>
+      </RequireAuth></InstallGuard>
     ),
   },
   {
     path: '/support/tickets',
     element: (
-      <RequireAuth>
+      <InstallGuard><RequireAuth>
         <AppLayout>
           <TicketListPage />
         </AppLayout>
-      </RequireAuth>
+      </RequireAuth></InstallGuard>
     ),
   },
   {
     path: '/support/tickets/new',
     element: (
-      <RequireAuth>
+      <InstallGuard><RequireAuth>
         <AppLayout>
           <NewTicketPage />
         </AppLayout>
-      </RequireAuth>
+      </RequireAuth></InstallGuard>
     ),
   },
   {
     path: '/support/tickets/:id',
     element: (
-      <RequireAuth>
+      <InstallGuard><RequireAuth>
         <AppLayout>
           <TicketDetailPage />
         </AppLayout>
-      </RequireAuth>
+      </RequireAuth></InstallGuard>
     ),
   },
   {
     path: '/admin/login',
-    element: <AdminLoginPage />,
+    element: <InstallGuard><AdminLoginPage /></InstallGuard>,
   },
   {
     path: '/admin',
     element: (
-      <RequireAdminAuth>
+      <InstallGuard><RequireAdminAuth>
         <AdminLayout>
           <AdminOverviewPage />
         </AdminLayout>
-      </RequireAdminAuth>
+      </RequireAdminAuth></InstallGuard>
     ),
   },
   {
     path: '/admin/users',
     element: (
-      <RequireAdminAuth>
+      <InstallGuard><RequireAdminAuth>
         <AdminLayout>
           <UserListPage />
         </AdminLayout>
-      </RequireAdminAuth>
+      </RequireAdminAuth></InstallGuard>
     ),
   },
   {
     path: '/admin/users/:id',
     element: (
-      <RequireAdminAuth>
+      <InstallGuard><RequireAdminAuth>
         <AdminLayout>
           <UserDetailPage />
         </AdminLayout>
-      </RequireAdminAuth>
+      </RequireAdminAuth></InstallGuard>
     ),
   },
   {
     path: '/admin/subscriptions',
     element: (
-      <RequireAdminAuth>
+      <InstallGuard><RequireAdminAuth>
         <AdminLayout>
           <SubscriptionListPage />
         </AdminLayout>
-      </RequireAdminAuth>
+      </RequireAdminAuth></InstallGuard>
     ),
   },
   {
     path: '/admin/plans',
     element: (
-      <RequireAdminAuth>
+      <InstallGuard><RequireAdminAuth>
         <AdminLayout>
           <PlanListPage />
         </AdminLayout>
-      </RequireAdminAuth>
+      </RequireAdminAuth></InstallGuard>
     ),
   },
   {
     path: '/admin/support',
     element: (
-      <RequireAdminAuth>
+      <InstallGuard><RequireAdminAuth>
         <AdminLayout>
           <AdminTicketListPage />
         </AdminLayout>
-      </RequireAdminAuth>
+      </RequireAdminAuth></InstallGuard>
     ),
   },
   {
     path: '/admin/settings',
     element: (
-      <RequireAdminAuth>
+      <InstallGuard><RequireAdminAuth>
         <AdminLayout>
           <AdminSettingsPage />
         </AdminLayout>
-      </RequireAdminAuth>
+      </RequireAdminAuth></InstallGuard>
     ),
   },
   {
     path: '/admin/audit',
     element: (
-      <RequireAdminAuth>
+      <InstallGuard><RequireAdminAuth>
         <AdminLayout>
           <AuditLogPage />
         </AdminLayout>
-      </RequireAdminAuth>
+      </RequireAdminAuth></InstallGuard>
     ),
   },
   {
     path: '/settings/*',
     element: (
-      <RequireAuth>
+      <InstallGuard><RequireAuth>
         <RequireOnboarding>
           <AppLayout>
             <SettingsPage />
           </AppLayout>
         </RequireOnboarding>
-      </RequireAuth>
+      </RequireAuth></InstallGuard>
     ),
   },
   {
     path: '/signin',
     element: (
-      <RequireGuest>
+      <InstallGuard><RequireGuest>
         <SignInPage />
-      </RequireGuest>
+      </RequireGuest></InstallGuard>
     ),
   },
   {
     path: '/signup',
     element: (
-      <RequireGuest>
+      <InstallGuard><RequireGuest>
         <SignUpPage />
-      </RequireGuest>
+      </RequireGuest></InstallGuard>
     ),
   },
   {
     path: '/forgot-password',
     element: (
-      <RequireGuest>
+      <InstallGuard><RequireGuest>
         <ForgotPasswordPage />
-      </RequireGuest>
+      </RequireGuest></InstallGuard>
     ),
   },
   {
     path: '/reset-password',
     element: (
-      <RequireGuest>
+      <InstallGuard><RequireGuest>
         <ResetPasswordPage />
-      </RequireGuest>
+      </RequireGuest></InstallGuard>
     ),
   },
   {
     path: '/verify-email',
-    element: <VerifyEmailPage />,
+    element: <InstallGuard><VerifyEmailPage /></InstallGuard>,
   },
   {
     path: '/oauth/callback',
-    element: <OAuthCallbackPage />,
+    element: <InstallGuard><OAuthCallbackPage /></InstallGuard>,
   },
   {
     path: '/onboarding',
     element: (
-      <RequireAuth>
+      <InstallGuard><RequireAuth>
         <OnboardingPage />
-      </RequireAuth>
+      </RequireAuth></InstallGuard>
     ),
   },
   {
     path: '/home',
     element: (
-      <RequireAuth>
+      <InstallGuard><RequireAuth>
         <RequireOnboarding>
           <AppLayout>
             <HomePage />
           </AppLayout>
         </RequireOnboarding>
-      </RequireAuth>
+      </RequireAuth></InstallGuard>
     ),
   },
   {
     path: '/projects',
     element: (
-      <RequireAuth>
+      <InstallGuard><RequireAuth>
         <RequireOnboarding>
           <AppLayout>
             <ProjectsPage />
           </AppLayout>
         </RequireOnboarding>
-      </RequireAuth>
+      </RequireAuth></InstallGuard>
     ),
   },
   {
     path: '/studio/:projectId',
     element: (
-      <RequireAuth>
+      <InstallGuard><RequireAuth>
         <RequireOnboarding>
           <StudioPage />
         </RequireOnboarding>
-      </RequireAuth>
+      </RequireAuth></InstallGuard>
     ),
   },
   // Fallback
